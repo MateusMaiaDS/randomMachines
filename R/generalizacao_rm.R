@@ -1,46 +1,11 @@
-## GP-Bart
-#' @useDynLib rmachines
-#'
-#' @param formula Insert the formula of the model
-#' @param train the training data $\left\{\left \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N} used to train the model
-#' @param validation the validation data $\left\{\left \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V} used to calculate probabilities $\lambda_{r}$
-#' @param boots_size number of bootstrap samples
-#' @param cost it is the "C" constant of the regularisation of the SVM Lagrange formulation
-#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The default value is $\mathttt{NULL}$
-#' @param automatic_tuning boolean to define if the kernel hyperparameters will be selected using the $\mathttt{sigest}$ from the $\mathttt{ksvm}$ function
-#' @param gamma_rbf the hyperparameter $\gamma_{RBF}$ used in the RBF kernel
-#' @param gamma_lap the hyperparameter $\gamma_{LAP}$ used in the Laplacian kernel
-#' @param degree the degree of used in the Polynomial kernel
-#' @param poly_scale the scale parameter from Polynomial kernel
-#' @param offset the offset parameter from the Polynomial kernel
-#' @param gamma_cau the offset parameter from the Cauchy kernel
-#' @param d_t ??
-#' @param kernels the vector with the kernel functions that will me used in the random machines.
-#' @param prob_model a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = $\mathttt{R})
-#'
-#' @export
-random_machines_meu <- function(formula,
-                                train,
-                                validation,
-                                boots_size = 25,
-                                cost = 10,
-                                seed.bootstrap = NULL,
-                                automatic_tuning = FALSE,
-                                gamma_rbf = 1,
-                                gamma_lap = 1,
-                                degree = 2,
-                                poly_scale = 1,
-                                offset = 0,
-                                gamma_cau = 1, d_t = 2,
-                                kernels = c("rbfdot", "polydot", "laplacedot", "vanilladot", "cauchydot"),
+random_machines_meu <- function(formula, train, validation, boots_size = 25, cost = 10,
+                                degree = 2, seed.bootstrap = NULL, automatic_tuning = FALSE,
+                                gamma_rbf = 1, gamma_lap = 1, poly_scale = 1, offset = 0, gamma_cau = 1, d_t = 2,
+                                kernels = c("rbfdot", "polydot", "laplacedot", "vanilladot", "cauchydot", "tdot"),
                                 prob_model = T) {
-
-
-   # New kernel functions used by the new article. Discuss with Ara but for the package implementation
-   # I think we should keep only the four built-in ksvm function
-   cauchydot <- function(sigma = 1) {
+  cauchydot <- function(sigma = 1) {
     norma <- function(x, y) {
-      return(norm(matrix(x - y),type = "2"))
+      return(Rfast::Norm(matrix(x - y)))
     }
 
     rval <- function(x, y = NULL) {
@@ -66,7 +31,7 @@ random_machines_meu <- function(formula,
 
   tdot <- function(d = 2) {
     norma <- function(x, y, d) {
-      return(sqrt(norm(matrix(x - y),type = "2"))^d)
+      return(sqrt(Rfast::Norm(matrix(x - y)))^d)
     }
 
     rval <- function(x, y = NULL) {
@@ -707,6 +672,79 @@ predict_rm_meu <- function(mod, newdata, prob_model = T, agreement = FALSE) {
       return(list(prediction = pred_df_fct, agreement = avg_agreement))
     } else {
       return(pred_df_fct)
+    }
+  }
+}
+
+
+predict_rm_meu_shap <- function(mod, newdata) {
+  prob_model <- T
+  agreement <- FALSE
+
+  if (prob_model == T) {
+    models <- mod$bootstrap_models
+    train <- mod$train
+    class_name <- mod$class_name
+    kernel_weight <- mod$kernel_weight
+    predict_new <- purrr::map(models, ~ kernlab::predict(.x, newdata = newdata, type = "probabilities")[, 2])
+    predict_df <- predict_new %>%
+      unlist() %>%
+      matrix(
+        ncol = nrow(newdata),
+        byrow = TRUE
+      )
+    predict_df_new <- purrr::map(seq(1:nrow(newdata)), ~ predict_df[
+      ,
+      .x
+    ])
+    pred_df_fct <- purrr::map(predict_df_new, ~ weighted.mean(.x, kernel_weight))
+    return(pred_df_fct %>% unlist())
+  } else {
+    models <- mod$bootstrap_models
+    train <- mod$train
+    class_name <- mod$class_name
+    kernel_weight <- mod$kernel_weight
+    predict_new <- purrr::map(models, ~ kernlab::predict(.x,
+      newdata = newdata
+    ))
+    predict_df <- predict_new %>%
+      unlist() %>%
+      matrix(
+        ncol = nrow(newdata),
+        byrow = TRUE
+      )
+    predict_df_new <- purrr::map(seq(1:nrow(newdata)), ~ predict_df[
+      ,
+      .x
+    ])
+    pred_df_fct <- purrr::map(predict_df_new, ~ ifelse(.x ==
+      unlist(levels(train[[class_name]]))[1], 1, -1)) %>%
+      purrr::map(~ .x / ((1 + 1e-10) - kernel_weight)^2) %>%
+      purrr::map(sum) %>%
+      purrr::map(sign) %>%
+      purrr::map(~ ifelse(.x ==
+        1, levels(dplyr::pull(train, class_name))[1], levels(unlist(train[
+        ,
+        class_name
+      ]))[2])) %>%
+      unlist() %>%
+      as.factor()
+    levels_class <- levels(train[[class_name]])
+    pred_df_standard <- ifelse(predict_df == levels_class[[1]],
+      1, -1
+    )
+    agreement_trees <- tcrossprod(pred_df_standard)
+    agreement_trees <- (agreement_trees + agreement_trees[
+      1,
+      1
+    ]) / (2 * agreement_trees[1, 1])
+    avg_agreement <- mean(agreement_trees[lower.tri(agreement_trees,
+      diag = FALSE
+    )])
+    if (agreement) {
+      return(list(prediction = pred_df_fct, agreement = avg_agreement))
+    } else {
+      return(pred_df_fct %>% unlist())
     }
   }
 }
