@@ -6,8 +6,8 @@
 #' @param validation the validation data $\left\{\left \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V} used to calculate probabilities $\lambda_{r}$
 #' @param boots_size number of bootstrap samples
 #' @param cost it is the "C" constant of the regularisation of the SVM Lagrange formulation
-#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The default value is $\mathttt{NULL}$
-#' @param automatic_tuning boolean to define if the kernel hyperparameters will be selected using the $\mathttt{sigest}$ from the $\mathttt{ksvm}$ function
+#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The default value is $\texttt{NULL}$
+#' @param automatic_tuning boolean to define if the kernel hyperparameters will be selected using the $\texttt{sigest}$ from the $\texttt{ksvm}$ function
 #' @param gamma_rbf the hyperparameter $\gamma_{RBF}$ used in the RBF kernel
 #' @param gamma_lap the hyperparameter $\gamma_{LAP}$ used in the Laplacian kernel
 #' @param degree the degree of used in the Polynomial kernel
@@ -16,7 +16,7 @@
 #' @param gamma_cau the offset parameter from the Cauchy kernel
 #' @param d_t ??
 #' @param kernels the vector with the kernel functions that will me used in the random machines.
-#' @param prob_model a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = $\mathttt{R})
+#' @param prob_model a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = $\texttt{R})
 #'
 #' @export
 random_machines_meu <- function(formula,
