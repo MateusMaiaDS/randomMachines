@@ -89,64 +89,73 @@ random_machines_meu <- function(formula,
     return(new("kernel", .Data = rval, kpar = list(d = d)))
   }
 
-  if (prob_model == T) {
-    test <- validation
-    class_name <- as.character(formula[[2]])
-    prob_weights <- list()
-    kernel_type <- kernels
-    if (automatic_tuning) {
-      early_model <- purrr::map(kernel_type, ~ kernlab::ksvm(formula,
-        prob.model = T,
-        data = train, type = "C-svc", kernel = if (.x == "vanilladot") {
-          "polydot"
-        } else if (.x == "cauchydot") {
-          cauchydot()
-        } else if (.x == "tdot") {
-          tdot()
-        } else {
-          .x
-        }, C = cost, kpar = if (.x == "laplacedot" || .x == "rbfdot") {
-          "automatic"
-        } else if (.x == "polydot") {
-          list(degree = 2, scale = poly_scale, offset = 0)
-        } else if (.x == "cauchydot") {
-          list(sigma = gamma_cau)
-        } else if (.x == "tdot") {
-          list(d = d_t)
-        } else {
-          list(degree = 1, scale = poly_scale, offset = 0)
-        }
-      ))
+  # Calculating the probabilities
+  test <- validation
+  class_name <- as.character(formula[[2]])
+  prob_weights <- list()
+  kernel_type <- kernels
+  # Checking wether or not use automatic tuning
+  if (automatic_tuning) {
+    early_model <- lapply(kernel_type, function(k_type){
+      kernlab::ksvm(formula,
+                    prob.model = T,
+                    data = train, type = "C-svc",
+                    kernel = if (k_type == "vanilladot") {
+                          "polydot"
+                        } else if (k_type == "cauchydot") {
+                          cauchydot()
+                        } else if (k_type == "tdot") {
+                          tdot()
+                        } else {
+                          k_type
+                        }, C = cost, kpar = if (k_type == "laplacedot" || k_type == "rbfdot") {
+                          "automatic"
+                        } else if (k_type == "polydot") {
+                          list(degree = 2, scale = poly_scale, offset = 0)
+                        } else if (k_type == "cauchydot") {
+                          list(sigma = gamma_cau)
+                        } else if (k_type == "tdot") {
+                          list(d = d_t)
+                        } else {
+                          list(degree = 1, scale = poly_scale, offset = 0)
+                        }
+      )})
     } else {
-      early_model <- purrr::map(kernel_type, ~ kernlab::ksvm(formula,
-        prob.model = T,
-        data = train, type = "C-svc", kernel = if (.x ==
-          "vanilladot") {
-          "polydot"
-        } else if (.x == "cauchydot") {
-          cauchydot()
-        } else if (.x == "tdot") {
-          tdot()
-        } else {
-          .x
-        }, C = cost, kpar = if (.x == "laplacedot") {
-          list(sigma = gamma_lap)
-        } else if (.x == "rbfdot") {
-          list(sigma = gamma_rbf)
-        } else if (.x == "polydot") {
-          list(degree = 2, scale = poly_scale, offset = 0)
-        } else if (.x == "cauchydot") {
-          list(sigma = gamma_cau)
-        } else if (.x == "tdot") {
-          list(d = d_t)
-        } else {
-          list(degree = 1, scale = poly_scale, offset = 0)
-        }
-      ))
+      early_model <- lapply(kernel_type, function(k_type){
+
+        kernlab::ksvm(formula,
+                      prob.model = T,
+                      data = train, type = "C-svc",
+                      kernel = if (k_type == "vanilladot") {
+                            "polydot"
+                          } else if (k_type == "cauchydot") {
+                            cauchydot()
+                          } else if (k_type == "tdot") {
+                            tdot()
+                          } else {
+                            k_type
+                          }, C = cost, kpar = if (k_type == "laplacedot") {
+                            list(sigma = gamma_lap)
+                          } else if (k_type == "rbfdot") {
+                            list(sigma = gamma_rbf)
+                          } else if (k_type == "polydot") {
+                            list(degree = 2, scale = poly_scale, offset = 0)
+                          } else if (k_type == "cauchydot") {
+                            list(sigma = gamma_cau)
+                          } else if (k_type == "tdot") {
+                            list(d = d_t)
+                          } else {
+                            list(degree = 1, scale = poly_scale, offset = 0)
+                          }
+          )})
     }
-    predict <- purrr::map(early_model, ~ kernlab::predict(.x,
-      newdata = test, type = "probabilities"
-    )[, 2])
+
+    # Getting tprobabilities
+    predict <- lapply(early_model,function(y){kernlab::predict(y,newdata = test, type = "probabilities")[, 2]})
+
+
+    # CONTINUE FROM HERE
+
     brier <- purrr::map(predict, ~ measures::Brier(probabilities = .x, truth = unlist(test[, class_name]), negative = 0, positive = 1)) %>% unlist()
     log_brier <- log((1 - brier) / brier)
     log_brier[is.infinite(log_brier)] <- 1 # Sometimes the brier can be equal to 0, so this line certify to not produce any NA
