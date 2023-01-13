@@ -36,6 +36,7 @@ random_machines_meu <- function(formula,
                                 prob_model = T) {
 
 
+
    # New kernel functions used by the new article. Discuss with Ara but for the package implementation
    # I think we should keep only the four built-in ksvm function
    cauchydot <- function(sigma = 1) {
@@ -94,6 +95,9 @@ random_machines_meu <- function(formula,
   class_name <- as.character(formula[[2]])
   prob_weights <- list()
   kernel_type <- kernels
+
+  # Getting the levels of the target variable
+  y_levels <- levels(train[[class_name]])
   # Checking wether or not use automatic tuning
   if (automatic_tuning) {
     early_model <- lapply(kernel_type, function(k_type){
@@ -155,8 +159,8 @@ random_machines_meu <- function(formula,
 
 
     # CONTINUE FROM HERE
+    m_brier <- unlist(lapply(predict, function(p) {brier_score(prob = p, observed = (test[[class_name]]),levels = y_levels)}))
 
-    brier <- purrr::map(predict, ~ measures::Brier(probabilities = .x, truth = unlist(test[, class_name]), negative = 0, positive = 1)) %>% unlist()
     log_brier <- log((1 - brier) / brier)
     log_brier[is.infinite(log_brier)] <- 1 # Sometimes the brier can be equal to 0, so this line certify to not produce any NA
     prob_weights <- log_brier / sum(log_brier)
@@ -169,21 +173,24 @@ random_machines_meu <- function(formula,
     at_least_one <- NULL
     if (is.null(seed.bootstrap)) {
       while (is.null(at_least_one)) {
-        boots_index_row_new <- purrr::map(
-          boots_index_row,
-          ~ sample(1:.x, .x, replace = TRUE)
+        boots_index_row_new <- lapply(
+          boots_index_row,function(x){
+              sample(1:x, x, replace = TRUE)
+            }
         )
-        boots_sample <- purrr::map(boots_index_row_new, ~ train[.x, ])
-        out_of_bag <- purrr::map(boots_index_row_new, ~ train[-unique(.x), ])
+        boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
+        out_of_bag <- lapply(boots_index_row_new, function(x) {train[-unique(x), ]})
+
         ## a classe y==1 precisa ter mais de 1 observacao (duas ou mais)
         for (p in 1:length(boots_sample)) {
           while (table(boots_sample[[p]][class_name])[2] < 2) {
-            boots_index_row_new_new <- purrr::map(
-              boots_index_row,
-              ~ sample(1:.x, .x, replace = TRUE)
+            boots_index_row_new_new <- lapply(
+              boots_index_row, function(x){
+                  sample(1:x, x, replace = TRUE)
+                }
             )
-            boots_sample_new <- purrr::map(boots_index_row_new_new, ~ train[.x, ])
-            out_of_bag_new <- purrr::map(boots_index_row_new_new, ~ train[-unique(.x), ])
+            boots_sample_new <- lapply(boots_index_row_new_new, function(x){train[x, ]})
+            out_of_bag_new <- lapply(boots_index_row_new_new, function(x){train[-unique(x), ]})
 
             boots_sample[[p]] <- boots_sample_new[[1]]
             out_of_bag[[p]] <- out_of_bag_new[[1]]
@@ -201,21 +208,24 @@ random_machines_meu <- function(formula,
     } else {
       set.seed(seed.bootstrap)
       while (is.null(at_least_one)) {
-        boots_index_row_new <- purrr::map(
-          boots_index_row,
-          ~ sample(1:.x, .x, replace = TRUE)
+        boots_index_row_new <- lapply(
+          boots_index_row, function(x){
+              sample(1:x, x, replace = TRUE)
+            }
         )
-        boots_sample <- purrr::map(boots_index_row_new, ~ train[.x, ])
-        out_of_bag <- purrr::map(boots_index_row_new, ~ train[-unique(.x), ])
-        ## a classe y==1 precisa ter mais de 1 observacao (duas ou mais)
+        boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
+        out_of_bag <- lapply(boots_index_row_new, function(x){train[-unique(x), ]})
+
+        ## The first class y==1 needs to has more than one observation (two or more)
         for (p in 1:length(boots_sample)) {
           while (table(boots_sample[[p]][class_name])[2] < 2) {
-            boots_index_row_new_new <- purrr::map(
-              boots_index_row,
-              ~ sample(1:.x, .x, replace = TRUE)
+            boots_index_row_new_new <- lapply(
+              boots_index_row, function(x){
+                  sample(1:x, x, replace = TRUE)
+                }
             )
-            boots_sample_new <- purrr::map(boots_index_row_new_new, ~ train[.x, ])
-            out_of_bag_new <- purrr::map(boots_index_row_new_new, ~ train[-unique(.x), ])
+            boots_sample_new <- lapply(boots_index_row_new_new, function(x) {train[x, ]})
+            out_of_bag_new <- lapply(boots_index_row_new_new, function(x) {train[-unique(x), ]})
 
             boots_sample[[p]] <- boots_sample_new[[1]]
             out_of_bag[[p]] <- out_of_bag_new[[1]]
@@ -231,6 +241,7 @@ random_machines_meu <- function(formula,
         }
       }
     }
+
     random_kernel <- sample(kernel_type, boots_size, replace = TRUE, prob = prob_weights)
     if (automatic_tuning) {
       models <- purrr::map2(boots_sample, random_kernel, ~ kernlab::ksvm(formula,
@@ -718,4 +729,18 @@ predict_rm_meu <- function(mod, newdata, prob_model = T, agreement = FALSE) {
       return(pred_df_fct)
     }
   }
+}
+
+
+#' Brier Score function
+#'
+#' @param prob predicted probabilities
+#' @param observed $y$ observed values (it assumed that the positive class is coded is equal to one and the negative 0)
+#'
+#' @export
+#'
+brier_score <- function(prob, observed, levels){
+  y <- ifelse(observed==levels[1],1,0)
+  b_score <- mean((y-prob)^2)
+  return(b_score)
 }
