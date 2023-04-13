@@ -25,3 +25,4 @@ d_t = 2
 kernels = c("rbfdot", "polydot", "laplacedot", "vanilladot")
 prob_model = T
 
+mod <- random_machines(formula = formula,train = train,validation = validation,kernels = kernels)
