@@ -69,6 +69,8 @@ random_machines <- function(formula,
                                     d_t = d_t,
                                     kernels = kernels)
    }
+
+  return(rm_mod)
 }
 
 
@@ -867,7 +869,22 @@ random_machines_acc <- function(formula,
   return(model_result)
 }
 
-predict_rm <- function(mod, newdata, agreement = FALSE) {
+#' Prediction function for the rm_class_model
+#'
+#' This function predicts the outcome for a RM object model using new data
+#'
+#' @param mod A fitted RM model object of class "rm_model"
+#' @param newdata A data frame or matrix containing the new data to be predicted
+#'
+#' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`
+#'
+#' @examples
+#' library(rmachines)
+#' sim_data <- rmachines::sim_class(n = 100)
+#' rm_mod <- rmachines::random_machines(y~., train = sim_data, valiation = sim_data)
+#' rm_pred <- predict(rm_mod, newdata = sim_data)
+predict.rm_model <- function(mod, newdata) {
+  # UseMethod(predict,rm_model)
   if (mod$prob_model) {
     predict_new <- lapply(mod$bootstrap_models, function(x) {kernlab::predict(x, newdata = newdata, type = "probabilities")[, 2]})
     predict_df <- matrix(unlist(predict_new), ncol = nrow(newdata), byrow = TRUE)
