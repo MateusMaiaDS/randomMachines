@@ -3,5 +3,4 @@
 export(brier_score)
 export(random_machines)
 export(sim_class)
-S3method(predict,rm_model)
 useDynLib(rmachines)

@@ -4,7 +4,7 @@
 \alias{predict.rm_model}
 \title{Prediction function for the rm_class_model}
 \usage{
-predict.rm_model(mod, newdata)
+\method{predict}{rm_model}(mod, newdata)
 }
 \arguments{
 \item{mod}{A fitted RM model object of class "rm_model"}
