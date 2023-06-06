@@ -5,10 +5,10 @@
 #' @param n Sample size
 #' @param p Number of predictors
 #' @param ratio Ratio between class A and class B
-#' @param mean_one Mean of X1
-#' @param sd_one Standard deviation of X1
-#' @param mean_two Mean of X2
-#' @param sd_two Standard devation of X2
+#' @param mean_one Mean of $X_{1}$
+#' @param sd_one Standard deviation of $X_{1}$
+#' @param mean_two Mean of $X_{2}$
+#' @param sd_two Standard devation of $X_{2}$
 #' @param seed Setting a seed for reproducibility of results. The default is NULL
 #' @return A simulated data.frame with two predictors for a binary classification problem
 #'
