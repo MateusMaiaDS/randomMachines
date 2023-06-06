@@ -4,7 +4,7 @@
 \alias{predict.rm_model_class}
 \title{Prediction function for the rm_class_model}
 \usage{
-predict.rm_model_class(mod, newdata)
+\method{predict}{rm_model_class}(mod, newdata)
 }
 \arguments{
 \item{mod}{A fitted RM model object of class "rm_model"}
@@ -20,7 +20,6 @@ This function predicts the outcome for a RM object model using new data
 \examples{
 library(rmachines)
 sim_data <- rmachines::sim_class(n = 100)
-rm_mod <- rmachines::random_machines(y~., train = sim_data, valiation = sim_data)
-rm_pred <- predict(rm_mod, newdata = sim_data)
+rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
 
 }

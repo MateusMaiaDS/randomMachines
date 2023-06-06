@@ -10,6 +10,8 @@ brier_score(prob, observed, levels)
 \item{prob}{predicted probabilities}
 
 \item{observed}{$y$ observed values (it assumed that the positive class is coded is equal to one and the negative 0)}
+
+\item{levels}{A string vector with the original levels from the target variable}
 }
 \description{
 Brier Score function

@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulation_examples.R
 \name{sim_class}
 \alias{sim_class}
-\title{Function to generate a two classification dataset from normal distribution}
+\title{Function to generate a two classification data set from normal distribution}
 \usage{
 sim_class(
   n,

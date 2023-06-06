@@ -1,9 +1,8 @@
-## GP-Bart
-#' @useDynLib rmachines
+#' Call the Random Machines model for a regression or classification task.
 #'
 #' @param formula Insert the formula of the model
-#' @param train the training data $\left\{\left \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N} used to train the model
-#' @param validation the validation data $\left\{\left \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V} used to calculate probabilities $\lambda_{r}$
+#' @param train the training data $\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N} used to train the model
+#' @param validation the validation data $\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V} used to calculate probabilities $\lambda_{r}$
 #' @param boots_size number of bootstrap samples
 #' @param cost it is the "C" constant of the regularisation of the SVM Lagrange formulation
 #' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The default value is $\texttt{NULL}$
@@ -17,6 +16,9 @@
 #' @param d_t ??
 #' @param kernels the vector with the kernel functions that will me used in the random machines.
 #' @param prob_model a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = $\texttt{R})
+#' @param loss_function Define which loss function is gonna be used
+#' @param epsilon The epsilon in the loss function used from the SVR implementation.
+#' @param beta The correlation parameter $\beta$ which calibrate the penalisation of each kernel performance.
 #'
 #' @export
 random_machines <- function(formula,
@@ -34,7 +36,12 @@ random_machines <- function(formula,
                                 gamma_cau = 1, d_t = 2,
                                 kernels = c("rbfdot", "polydot", "laplacedot",
                                             "vanilladot", "cauchydot"),
-                                prob_model = T) {
+                                prob_model = T,
+                                # Default parameters for the regression case
+                                loss_function = RMSE,
+                                epsilon = 0.1,
+                                beta = 2
+                                ) {
 
 
    # Checking the class of the training data
@@ -78,7 +85,19 @@ random_machines <- function(formula,
                                     d_t = d_t,
                                     kernels = kernels)
    } else if(reg_rm) {
-     rm_mod <- random_machines_regression
+     rm_mod <- regression_random_machines(formula = formula,
+                                          train = train,
+                                          validation = validation,
+                                          boots_size = boots_size,
+                                          cost = cost,
+                                          seed.bootstrap = seed.bootstrap,
+                                          automatic_tuning = automatic_tuning,
+                                          gamma_rbf = gamma_rbf,
+                                          gamma_lap = gamma_lap,
+                                          degree = degree,
+                                          poly_scale = poly_scale,
+                                          offset = offset,
+                                          epsilon = epsilon,beta = beta,loss_function = loss_function)
    } else {
      stop("Insert a valid data.frame() with a valid response.")
    }
@@ -234,7 +253,7 @@ random_machines_prob <- function(formula,
   models <- rep(list(0), boots_size)
   boots_sample <- list(rep(boots_size))
   out_of_bag <- list(rep(boots_size))
-  boots_index_row <- list(nrow(train)) %>% rep(boots_size)
+  boots_index_row <- rep(list(nrow(train)) ,boots_size)
   at_least_one <- NULL
 
   # Sampling the bootstrap samples
@@ -395,7 +414,7 @@ random_machines_prob <- function(formula,
   if (length(kern_names_final) == 2) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2]
       ), kern_names_final), model_params = list(
@@ -409,7 +428,7 @@ random_machines_prob <- function(formula,
   } else if (length(kern_names_final) == 3) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3]
@@ -424,7 +443,7 @@ random_machines_prob <- function(formula,
   } else if (length(kern_names_final) == 4) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3],
@@ -440,7 +459,7 @@ random_machines_prob <- function(formula,
   } else if (length(kern_names_final) == 5) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3],
@@ -458,7 +477,7 @@ random_machines_prob <- function(formula,
   } else if (length(kern_names_final) == 6) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3],
@@ -634,7 +653,7 @@ random_machines_acc <- function(formula,
   models <- rep(list(0), boots_size)
   boots_sample <- list(rep(boots_size))
   out_of_bag <- list(rep(boots_size))
-  boots_index_row <- list(nrow(train)) %>% rep(boots_size)
+  boots_index_row <- rep(list(nrow(train)) ,boots_size)
   at_least_one <- NULL
 
   # Sampling the bootstrap samples
@@ -794,7 +813,7 @@ random_machines_acc <- function(formula,
   if (length(kern_names_final) == 2) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2]
       ), kern_names_final), model_params = list(
@@ -809,7 +828,7 @@ random_machines_acc <- function(formula,
   } else if (length(kern_names_final) == 3) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3]
@@ -825,7 +844,7 @@ random_machines_acc <- function(formula,
   } else if (length(kern_names_final) == 4) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3],
@@ -841,7 +860,7 @@ random_machines_acc <- function(formula,
   } else if (length(kern_names_final) == 5) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3],
@@ -858,7 +877,7 @@ random_machines_acc <- function(formula,
   } else if (length(kern_names_final) == 6) {
     model_result <- list(
       train = train, class_name = class_name,
-      kernel_weight = kernel_weight, lambda_values = setNames(list(
+      kernel_weight = kernel_weight, lambda_values = stats::setNames(list(
         prob_weights[1],
         prob_weights[2],
         prob_weights[3],
@@ -882,16 +901,16 @@ random_machines_acc <- function(formula,
   return(model_result)
 }
 
+
 regression_random_machines<-function(formula,#Formula that will be used
                                      train,#The Training set
                                      validation,#The validation set
-                                     test, #New TEST
-                                     class_name,#The string corresponding to the variable that will be predicted
                                      boots_size=25, #B correspoding to the number of bootstrap samples
                                      cost=1,#Cost parameter of SVM
                                      gamma_rbf=1,#Gamma used in Table 1.
                                      gamma_lap=1,
                                      poly_scale = 1, # Scale factor from polynomial kernel
+                                     offset = 0, # offset from the polynomial kernel
                                      degree=2,#Degree used in Table 1.
                                      epsilon=0.1,beta=2,seed.bootstrap=NULL,
                                      loss_function,automatic_tuning=FALSE #Choose a loss-fucntion
@@ -919,7 +938,7 @@ regression_random_machines<-function(formula,#Formula that will be used
   #TUNING AUTOMÁTICO
   if(automatic_tuning){
 
-    early_model<- lapply(kernel_type,function(kern_type){ksvm(formula,data=train,type="eps-svr",
+    early_model<- lapply(kernel_type,function(kern_type){kernlab::ksvm(formula,data=train,type="eps-svr",
                                         kernel=if(kern_type=="vanilladot"){
                                           "polydot"
                                         }else{
@@ -930,14 +949,14 @@ regression_random_machines<-function(formula,#Formula that will be used
                                         {
                                           "automatic"
                                         }else if(kern_type=='polydot'){
-                                          list(degree=2,scale=poly_scale,offset=0)
+                                          list(degree=2,scale=poly_scale,offset=offset)
                                         }else{
-                                          list(degree=1,scale=poly_scale,offset=0)
+                                          list(degree=1,scale=poly_scale,offset=offset)
                                         },
                                         epsilon=epsilon)})
   }else{
     #The early model that will calculate the probabilities that will be used during the sort process
-    early_model<- lapply(kernel_type,function(kern_type){ksvm(formula,data=train,type="eps-svr",
+    early_model<- lapply(kernel_type,function(kern_type){kernlab::ksvm(formula,data=train,type="eps-svr",
                                        kernel=if(kern_type=="vanilladot"){
                                          "polydot"
                                        }else{
@@ -952,9 +971,9 @@ regression_random_machines<-function(formula,#Formula that will be used
                                          list(sigma=gamma_rbf)
 
                                        }else if(kern_type=='polydot'){
-                                         list(degree=2,scale=poly_scale,offset=0)
+                                         list(degree=2,scale=poly_scale,offset=offset)
                                        }else{
-                                         list(degree=1,scale=poly_scale,offset=0)
+                                         list(degree=1,scale=poly_scale,offset=offset)
                                        },
                                        epsilon=epsilon)})
   }
@@ -962,8 +981,8 @@ regression_random_machines<-function(formula,#Formula that will be used
   predict <- lapply(early_model,function(x)predict(x,newdata=validation))
 
   #Calculating the weights (Equation 9)
-  rmse <- lapply(predict,function(x){loss_function(predicted=x,observed=validation[,class_name],epsilon)}) %>% unlist
-  rmse<-rmse/sd(rmse)
+  rmse <- unlist(lapply(predict,function(x){loss_function(predicted=x,observed=validation[,class_name],epsilon)}))
+  rmse<-rmse/stats::sd(rmse)
   # std_rmse<-rmse/(range(validation[,class_name])[2]-range(validation[,class_name])[1])
   inv_rmse<-(exp(-rmse*beta))
 
@@ -975,7 +994,7 @@ regression_random_machines<-function(formula,#Formula that will be used
   models<-rep(list(0),boots_size)#Creating the list of models
   boots_sample<-list(rep(boots_size)) #Argument that will be passed in the map function
   out_of_bag<-list(rep(boots_size)) #OOB samples object
-  boots_index_row<-list(nrow(train)) %>% rep(boots_size)
+  boots_index_row<- rep(list(nrow(train)),boots_size)
 
   #====================================================
 
@@ -1014,9 +1033,9 @@ regression_random_machines<-function(formula,#Formula that will be used
                                                   {
                                                     "automatic"
                                                   }else if(rand_kern=='polydot'){
-                                                    list(degree=2,scale=poly_scale,offset=0)
+                                                    list(degree=2,scale=poly_scale,offset=offset)
                                                   }else{
-                                                    list(degree=1,scale=poly_scale,offset=0)
+                                                    list(degree=1,scale=poly_scale,offset=offset)
                                                   },
                                                   epsilon=epsilon)})
 
@@ -1034,9 +1053,9 @@ regression_random_machines<-function(formula,#Formula that will be used
                                                   }else if(rand_kern=='rbfdot'){
                                                     list(sigma=gamma_rbf)
                                                   }else if(rand_kern=='polydot'){
-                                                    list(degree=2,scale=poly_scale,offset=0)
+                                                    list(degree=2,scale=poly_scale,offset=offset)
                                                   }else{
-                                                    list(degree=1,scale=poly_scale,offset=0)
+                                                    list(degree=1,scale=poly_scale,offset=offset)
                                                   },epsilon=epsilon)})
 
   }
@@ -1056,7 +1075,7 @@ regression_random_machines<-function(formula,#Formula that will be used
   boots_error<-mapply(predict_oobg,out_of_bag, FUN  = function(pred_oob,oob){loss_function(predicted = pred_oob,observed = oob[,class_name],epsilon)})
 
   # Penalising by beta
-  kernel_weight<- sapply(kernel_weight/sd(kernel_weight),function(kern_weight){exp(-kern_weight*beta)})
+  kernel_weight<- sapply(kernel_weight/stats::sd(kernel_weight),function(kern_weight){exp(-kern_weight*beta)})
 
   # Normalizing it
   kernel_weight_norm <-kernel_weight/sum((kernel_weight))
@@ -1101,8 +1120,7 @@ regression_random_machines<-function(formula,#Formula that will be used
 #' @examples
 #' library(rmachines)
 #' sim_data <- rmachines::sim_class(n = 100)
-#' rm_mod <- rmachines::random_machines(y~., train = sim_data, valiation = sim_data)
-#' rm_pred <- predict(rm_mod, newdata = sim_data)
+#' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
 #'
 predict.rm_model_class <- function(mod, newdata) {
   # UseMethod(predict,rm_model)
@@ -1121,7 +1139,7 @@ predict.rm_model_class <- function(mod, newdata) {
     predict_new <- lapply(mod$bootstrap_models, function(x){kernlab::predict(x,newdata = newdata)})
     predict_df <- matrix(unlist(predict_new),ncol = nrow(newdata), byrow = TRUE)
     predict_df_new <- lapply(seq(1:nrow(newdata)), function(x){predict_df[,x]})
-    pred_df_fct <- lapply(predict_df_new, function(x) {ifelse(x==unlist(levels(mod$train[[mod$class_name]]))[1], 1, -1)})# %>%
+    pred_df_fct <- lapply(predict_df_new, function(x) {ifelse(x==unlist(levels(mod$train[[mod$class_name]]))[1], 1, -1)})
     pred_df_fct_final <- as.factor(unlist(lapply(pred_df_fct, function(x) {ifelse(sign(sum(x/((1+1e-10)-mod$kernel_weight)^2))==1,levels(mod$train[[mod$class_name]])[1],levels(mod$train[[mod$class_name]])[2]) })))
     return(pred_df_fct_final)
   }
@@ -1139,12 +1157,11 @@ predict.rm_model_class <- function(mod, newdata) {
 #' @examples
 #' library(rmachines)
 #' sim_data <- rmachines::sim_reg(n = 100)
-#' rm_mod <- rmachines::random_machines(y~., train = sim_data, valiation = sim_data)
-#' rm_pred <- predict(rm_mod, newdata = sim_data)
+#' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
 #'
 predict.rm_model_reg <- function(mod, newdata) {
   # Accessing training error
-  pred_df_test<-apply(mapply(mod$bootstrap_models,mod$kernel_weight_norm,FUN = function(mod, k_w_n){(predict(mod,newdata)*k_w_n)}),1,sum)#%>% #Multiplying the weights
+  pred_df_test<-apply(mapply(mod$bootstrap_models,mod$kernel_weight_norm,FUN = function(mod, k_w_n){(predict(mod,newdata)*k_w_n)}),1,sum) #Multiplying the weights
   return(pred_df_test)
 }
 
@@ -1153,7 +1170,7 @@ predict.rm_model_reg <- function(mod, newdata) {
 #'
 #' @param prob predicted probabilities
 #' @param observed $y$ observed values (it assumed that the positive class is coded is equal to one and the negative 0)
-#'
+#' @param levels A string vector with the original levels from the target variable
 #' @export
 #'
 brier_score <- function(prob, observed, levels){

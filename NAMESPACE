@@ -3,4 +3,4 @@
 export(brier_score)
 export(random_machines)
 export(sim_class)
-useDynLib(rmachines)
+export(sim_reg)

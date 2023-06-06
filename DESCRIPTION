@@ -4,7 +4,7 @@ Title: rmachines: An R package
 Version: 0.1.0
 Author: Who wrote it
 Maintainer: The package maintainer <yourself@somewhere.net>
-Description: The "rmachines" is an novel ensemble method using support vector machines (SVMs) as base learners.Suitable for classification and regression problems. For more details see [https://jds-online.org/journal/JDS/article/899/info](Ara et. al (2021)), [https://jds-online.org/journal/JDS/article/1257/info](Maia et. al (2021)), [https://www.sciencedirect.com/science/article/pii/S0957417422005097](Ara et. al (2022)),
+Description: The "rmachines" is an novel ensemble method using support vector machines (SVMs) as base learners. Suitable for classification and regression problems.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

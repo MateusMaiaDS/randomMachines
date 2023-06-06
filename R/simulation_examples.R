@@ -1,4 +1,4 @@
-#' Function to generate a two classification dataset from normal distribution
+#' Function to generate a two classification data set from normal distribution
 #'
 #' This function predicts the outcome for a RM object model using new data
 #'
@@ -27,10 +27,10 @@ sim_class <- function(n, p = 2 ,ratio = 0.5 , mean_one = 0,
      n_b <- round(n*ratio)
 
      # Generating values from the X observations
-     x_a <- replicate(p,rnorm(n_a,mean = mean_one,sd = sd_one))
+     x_a <- replicate(p,stats::rnorm(n_a,mean = mean_one,sd = sd_one))
      colnames(x_a) <- paste("x",1:p)
 
-     x_b <- replicate(p,rnorm(n_b,mean = mean_two,sd = sd_two))
+     x_b <- replicate(p,stats::rnorm(n_b,mean = mean_two,sd = sd_two))
      colnames(x_b) <- paste("x",1:p)
 
      # Formating the complete dataset
@@ -41,3 +41,33 @@ sim_class <- function(n, p = 2 ,ratio = 0.5 , mean_one = 0,
 
      return(simulated_data[sample(nrow(simulated_data)),])
 }
+
+
+#' Simple regression $y = x_{1}^{2} + e^{x_{2}^{2}} + \varepsilon$ case based on Ara et. al 2022
+#'
+#' @param n Sample size
+#' @param seed Define a seed to run the simulation. NULL is the default
+#'
+#' @return A simulated data.frame with two predictors and the target variable.
+#' @export
+#'
+#' @examples
+#' library(rmachines)
+#' sim_data <- sim_reg(n=100)
+sim_reg <- function(n,seed= NULL){
+
+        # Setting the seed.
+        set.seed(seed)
+
+        # Generating the x
+        x <- replicate(2,stats::runif(n,min = -1,max = 1))
+
+        colnames(x) <- paste0("x.",1:2)
+
+        # Generating the y
+        y  <- x[,1]^2 + exp(-x[,2]^2) + stats::rnorm(n = n,mean = 0,sd = sqrt(0.25))
+
+        return(data.frame(x,y=y))
+}
+
+
