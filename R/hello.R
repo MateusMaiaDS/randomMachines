@@ -1,25 +1,26 @@
 #' Call the Random Machines model for a regression or classification task.
 #'
 #' @param formula Insert the formula of the model
-#' @param train the training data $\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N} used to train the model
-#' @param validation the validation data $\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V} used to calculate probabilities $\lambda_{r}$
+#' @param train the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N}} used to train the model
+#' @param validation the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V}} used to calculate probabilities \eqn{\lambda_{r}}
 #' @param boots_size number of bootstrap samples
 #' @param cost it is the "C" constant of the regularisation of the SVM Lagrange formulation
-#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The default value is $\texttt{NULL}$
-#' @param automatic_tuning boolean to define if the kernel hyperparameters will be selected using the $\texttt{sigest}$ from the $\texttt{ksvm}$ function
-#' @param gamma_rbf the hyperparameter $\gamma_{RBF}$ used in the RBF kernel
-#' @param gamma_lap the hyperparameter $\gamma_{LAP}$ used in the Laplacian kernel
+#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The default value is \eqn{\texttt{NULL}}
+#' @param automatic_tuning boolean to define if the kernel hyperparameters will be selected using the \eqn{\texttt{sigest}} from the \eqn{\texttt{ksvm}} function
+#' @param gamma_rbf the hyperparameter \eqn{\gamma_{RBF}} used in the RBF kernel
+#' @param gamma_lap the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian kernel
 #' @param degree the degree of used in the Polynomial kernel
 #' @param poly_scale the scale parameter from Polynomial kernel
 #' @param offset the offset parameter from the Polynomial kernel
 #' @param gamma_cau the offset parameter from the Cauchy kernel
 #' @param d_t ??
 #' @param kernels the vector with the kernel functions that will me used in the random machines.
-#' @param prob_model a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = $\texttt{R})
+#' @param prob_model a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = \eqn{\texttt{R}})
 #' @param loss_function Define which loss function is gonna be used
 #' @param epsilon The epsilon in the loss function used from the SVR implementation.
-#' @param beta The correlation parameter $\beta$ which calibrate the penalisation of each kernel performance.
+#' @param beta The correlation parameter \eqn{\beta} which calibrate the penalisation of each kernel performance.
 #'
+#' @importMethodsFrom kernlab predict
 #' @export
 random_machines <- function(formula,
                                 train,
@@ -105,7 +106,7 @@ random_machines <- function(formula,
   return(rm_mod)
 }
 
-
+#' @importMethodsFrom kernlab predict
 random_machines_prob <- function(formula,
                                  train,
                                  validation,
@@ -129,23 +130,23 @@ random_machines_prob <- function(formula,
     }
 
     rval <- function(x, y = NULL) {
-      if (!is(x, "vector")) {
+      if (!is.vector(x)) {
         stop("x must be a vector")
       }
-      if (!is(y, "vector") && !is.null(y)) {
+      if (!is.vector(y) && !is.null(y)) {
         stop("y must a vector")
       }
-      if (is(x, "vector") && is.null(y)) {
+      if (is.vector(x) && is.null(y)) {
         return(1)
       }
-      if (is(x, "vector") && is(y, "vector")) {
+      if (is.vector(x) && is.vector(y)) {
         if (!length(x) == length(y)) {
           stop("number of dimension must be the same on both data points")
         }
         return(1 / (1 + (norma(x, y) / sigma)))
       }
     }
-    return(new("kernel", .Data = rval, kpar = list(sigma = sigma)))
+    return(methods::new("kernel", .Data = rval, kpar = list(sigma = sigma)))
   }
 
 
@@ -155,23 +156,23 @@ random_machines_prob <- function(formula,
     }
 
     rval <- function(x, y = NULL) {
-      if (!is(x, "vector")) {
+      if (!is.vector(x)) {
         stop("x must be a vector")
       }
-      if (!is(y, "vector") && !is.null(y)) {
+      if (!is.vector(y) && !is.null(y)) {
         stop("y must a vector")
       }
-      if (is(x, "vector") && is.null(y)) {
+      if (is.vector(x) && is.null(y)) {
         return(1)
       }
-      if (is(x, "vector") && is(y, "vector")) {
+      if (is.vector(x) && is.vector(y)) {
         if (!length(x) == length(y)) {
           stop("number of dimension must be the same on both data points")
         }
         return(1 / (1 + norma(x, y, d)))
       }
     }
-    return(new("kernel", .Data = rval, kpar = list(d = d)))
+    return(methods::new("kernel", .Data = rval, kpar = list(d = d)))
   }
 
   # Calculating the probabilities
@@ -239,7 +240,7 @@ random_machines_prob <- function(formula,
   }
 
   # Getting tprobabilities
-  predict <- lapply(early_model,function(y){kernlab::predict(y,newdata = test, type = "probabilities")[, 2]})
+  predict <- lapply(early_model,function(y){predict(y,newdata = test, type = "probabilities")[, 2]})
 
 
   # CONTINUE FROM HERE
@@ -382,9 +383,9 @@ random_machines_prob <- function(formula,
   }
 
   # Predicting for each model and getting the weights
-  predict <- lapply(models, function(mod){kernlab::predict(mod, newdata = test, type = "probabilities")[, 2]})
+  predict <- lapply(models, function(mod){predict(mod, newdata = test, type = "probabilities")[, 2]})
   predict_oobg <- mapply(models, out_of_bag,FUN = function(mod,oob){
-    kernlab::predict(mod,
+    predict(mod,
                      newdata = oob,
                      type = "probabilities")[, 2]})
 
@@ -524,23 +525,23 @@ random_machines_acc <- function(formula,
     }
 
     rval <- function(x, y = NULL) {
-      if (!is(x, "vector")) {
+      if (!is.vector(x)) {
         stop("x must be a vector")
       }
-      if (!is(y, "vector") && !is.null(y)) {
+      if (!is.vector(y) && !is.null(y)) {
         stop("y must a vector")
       }
-      if (is(x, "vector") && is.null(y)) {
+      if (is.vector(x) && is.null(y)) {
         return(1)
       }
-      if (is(x, "vector") && is(y, "vector")) {
+      if (is.vector(x) && is.vector(y)) {
         if (!length(x) == length(y)) {
           stop("number of dimension must be the same on both data points")
         }
         return(1 / (1 + (norma(x, y) / sigma)))
       }
     }
-    return(new("kernel", .Data = rval, kpar = list(sigma = sigma)))
+    return(methods::new("kernel", .Data = rval, kpar = list(sigma = sigma)))
   }
 
 
@@ -550,23 +551,23 @@ random_machines_acc <- function(formula,
     }
 
     rval <- function(x, y = NULL) {
-      if (!is(x, "vector")) {
+      if (!is.vector(x)) {
         stop("x must be a vector")
       }
-      if (!is(y, "vector") && !is.null(y)) {
+      if (!is.vector(y) && !is.null(y)) {
         stop("y must a vector")
       }
-      if (is(x, "vector") && is.null(y)) {
+      if (is.vector(x) && is.null(y)) {
         return(1)
       }
-      if (is(x, "vector") && is(y, "vector")) {
+      if (is.vector(x) && is.vector(y)) {
         if (!length(x) == length(y)) {
           stop("number of dimension must be the same on both data points")
         }
         return(1 / (1 + norma(x, y, d)))
       }
     }
-    return(new("kernel", .Data = rval, kpar = list(d = d)))
+    return(methods::new("kernel", .Data = rval, kpar = list(d = d)))
   }
 
   # Calculating the probabilities
@@ -634,7 +635,7 @@ random_machines_acc <- function(formula,
   }
 
   # Getting tprobabilities
-  predict <- lapply(early_model,function(y){kernlab::predict(y,newdata = test)})
+  predict <- lapply(early_model,function(y){predict(y,newdata = test)})
 
   # Create a function to calculate acc
   acc <- function(observed,pred) {
@@ -782,9 +783,9 @@ random_machines_acc <- function(formula,
   }
 
   # Predicting for each model and getting the weights
-  predict <- lapply(models, function(mod){kernlab::predict(mod, newdata = test, type = "probabilities")[, 2]})
+  predict <- lapply(models, function(mod){predict(mod, newdata = test, type = "probabilities")[, 2]})
   predict_oobg <- mapply(models, out_of_bag,FUN = function(mod,oob){
-    kernlab::predict(mod,
+    predict(mod,
                      newdata = oob)})
 
   kernel_weight_raw <- unlist(mapply(predict_oobg, out_of_bag, FUN = function(pred_oob,oob){
@@ -921,14 +922,6 @@ regression_random_machines<-function(formula,#Formula that will be used
   class_name <- as.character(formula[[2]])
 
   #Probability associated with each kernel function
-
-  #Root Mean Squared Error Function
-  RMSE<-function(predicted,observed,epsilon=NULL){
-    min<-min(observed)
-    max<-max(observed)
-    sqrt(mean(unlist((predicted-observed)^2)))
-  }
-
 
   prob_weights<-list()
 
@@ -1112,8 +1105,10 @@ regression_random_machines<-function(formula,#Formula that will be used
 #'
 #' This function predicts the outcome for a RM object model using new data
 #'
-#' @param mod A fitted RM model object of class "rm_model"
+#' @param object A fitted RM model object of class "rm_model"
 #' @param newdata A data frame or matrix containing the new data to be predicted
+#' @param ... currently not used.
+#' @importMethodsFrom kernlab predict
 #'
 #' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`
 #'
@@ -1122,25 +1117,25 @@ regression_random_machines<-function(formula,#Formula that will be used
 #' sim_data <- rmachines::sim_class(n = 100)
 #' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
 #'
-predict.rm_model_class <- function(mod, newdata) {
+predict.rm_model_class <- function(object, newdata,...) {
   # UseMethod(predict,rm_model)
-  if (mod$prob_model) {
-    predict_new <- lapply(mod$bootstrap_models, function(x) {kernlab::predict(x, newdata = newdata, type = "probabilities")[, 2]})
+  if (object$prob_model) {
+    predict_new <- lapply(object$bootstrap_models, function(x) {predict(x, newdata = newdata, type = "probabilities")[, 2]})
     predict_df <- matrix(unlist(predict_new), ncol = nrow(newdata), byrow = TRUE)
     predict_df_new <- lapply(seq(1:nrow(newdata)), function(x) {predict_df[,x]})
-    pred_df_fct <- lapply(predict_df_new, function(x) {stats::weighted.mean(x, mod$kernel_weight)})
+    pred_df_fct <- lapply(predict_df_new, function(x) {stats::weighted.mean(x, object$kernel_weight)})
     return(unlist(pred_df_fct))
 
   } else {
-    models <- mod$bootstrap_models
-    train <- mod$train
-    class_name <- mod$class_name
-    kernel_weight <- mod$kernel_weight
-    predict_new <- lapply(mod$bootstrap_models, function(x){kernlab::predict(x,newdata = newdata)})
+    models <- object$bootstrap_models
+    train <- object$train
+    class_name <- object$class_name
+    kernel_weight <- object$kernel_weight
+    predict_new <- lapply(object$bootstrap_models, function(x){predict(x,newdata = newdata)})
     predict_df <- matrix(unlist(predict_new),ncol = nrow(newdata), byrow = TRUE)
     predict_df_new <- lapply(seq(1:nrow(newdata)), function(x){predict_df[,x]})
-    pred_df_fct <- lapply(predict_df_new, function(x) {ifelse(x==unlist(levels(mod$train[[mod$class_name]]))[1], 1, -1)})
-    pred_df_fct_final <- as.factor(unlist(lapply(pred_df_fct, function(x) {ifelse(sign(sum(x/((1+1e-10)-mod$kernel_weight)^2))==1,levels(mod$train[[mod$class_name]])[1],levels(mod$train[[mod$class_name]])[2]) })))
+    pred_df_fct <- lapply(predict_df_new, function(x) {ifelse(x==unlist(levels(object$train[[object$class_name]]))[1], 1, -1)})
+    pred_df_fct_final <- as.factor(unlist(lapply(pred_df_fct, function(x) {ifelse(sign(sum(x/((1+1e-10)-object$kernel_weight)^2))==1,levels(object$train[[object$class_name]])[1],levels(object$train[[object$class_name]])[2]) })))
     return(pred_df_fct_final)
   }
 }
@@ -1149,8 +1144,11 @@ predict.rm_model_class <- function(mod, newdata) {
 #'
 #' This function predicts the outcome for a RM object model using new data
 #'
-#' @param mod A fitted RM model object of reg "rm_model"
+#' @param object A fitted RM model object of reg "rm_model"
 #' @param newdata A data frame or matrix containing the new data to be predicted
+#' @param ... currently not used.
+#'
+#' @importMethodsFrom kernlab predict
 #'
 #' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and reges in case of `prob_model = FALSE`
 #'
@@ -1159,9 +1157,9 @@ predict.rm_model_class <- function(mod, newdata) {
 #' sim_data <- rmachines::sim_reg(n = 100)
 #' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
 #'
-predict.rm_model_reg <- function(mod, newdata) {
+predict.rm_model_reg <- function(object, newdata,...) {
   # Accessing training error
-  pred_df_test<-apply(mapply(mod$bootstrap_models,mod$kernel_weight_norm,FUN = function(mod, k_w_n){(predict(mod,newdata)*k_w_n)}),1,sum) #Multiplying the weights
+  pred_df_test<-apply(mapply(object$bootstrap_models,object$kernel_weight_norm,FUN = function(mod, k_w_n){(predict(mod,newdata)*k_w_n)}),1,sum) #Multiplying the weights
   return(pred_df_test)
 }
 
@@ -1169,7 +1167,7 @@ predict.rm_model_reg <- function(mod, newdata) {
 #' Brier Score function
 #'
 #' @param prob predicted probabilities
-#' @param observed $y$ observed values (it assumed that the positive class is coded is equal to one and the negative 0)
+#' @param observed \eqn{y} observed values (it assumed that the positive class is coded is equal to one and the negative 0)
 #' @param levels A string vector with the original levels from the target variable
 #' @export
 #'
@@ -1177,4 +1175,11 @@ brier_score <- function(prob, observed, levels){
   y <- ifelse(observed==levels[1],1,0)
   b_score <- mean((y-prob)^2)
   return(b_score)
+}
+
+#Root Mean Squared Error Function
+RMSE<-function(predicted,observed,epsilon=NULL){
+  min<-min(observed)
+  max<-max(observed)
+  sqrt(mean(unlist((predicted-observed)^2)))
 }

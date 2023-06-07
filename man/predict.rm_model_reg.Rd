@@ -4,12 +4,14 @@
 \alias{predict.rm_model_reg}
 \title{Prediction function for the rm_reg_model}
 \usage{
-\method{predict}{rm_model_reg}(mod, newdata)
+predict.rm_model_reg(object, newdata, ...)
 }
 \arguments{
-\item{mod}{A fitted RM model object of reg "rm_model"}
+\item{object}{A fitted RM model object of reg "rm_model"}
 
 \item{newdata}{A data frame or matrix containing the new data to be predicted}
+
+\item{...}{currently not used.}
 }
 \value{
 A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and reges in case of `prob_model = FALSE`

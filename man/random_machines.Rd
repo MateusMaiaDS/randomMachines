@@ -29,21 +29,21 @@ random_machines(
 \arguments{
 \item{formula}{Insert the formula of the model}
 
-\item{train}{the training data $\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N} used to train the model}
+\item{train}{the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N}} used to train the model}
 
-\item{validation}{the validation data $\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V} used to calculate probabilities $\lambda_{r}$}
+\item{validation}{the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V}} used to calculate probabilities \eqn{\lambda_{r}}}
 
 \item{boots_size}{number of bootstrap samples}
 
 \item{cost}{it is the "C" constant of the regularisation of the SVM Lagrange formulation}
 
-\item{seed.bootstrap}{setting a seed to replicate bootstrap sampling. The default value is $\texttt{NULL}$}
+\item{seed.bootstrap}{setting a seed to replicate bootstrap sampling. The default value is \eqn{\texttt{NULL}}}
 
-\item{automatic_tuning}{boolean to define if the kernel hyperparameters will be selected using the $\texttt{sigest}$ from the $\texttt{ksvm}$ function}
+\item{automatic_tuning}{boolean to define if the kernel hyperparameters will be selected using the \eqn{\texttt{sigest}} from the \eqn{\texttt{ksvm}} function}
 
-\item{gamma_rbf}{the hyperparameter $\gamma_{RBF}$ used in the RBF kernel}
+\item{gamma_rbf}{the hyperparameter \eqn{\gamma_{RBF}} used in the RBF kernel}
 
-\item{gamma_lap}{the hyperparameter $\gamma_{LAP}$ used in the Laplacian kernel}
+\item{gamma_lap}{the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian kernel}
 
 \item{degree}{the degree of used in the Polynomial kernel}
 
@@ -57,13 +57,13 @@ random_machines(
 
 \item{kernels}{the vector with the kernel functions that will me used in the random machines.}
 
-\item{prob_model}{a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = $\texttt{R})}
+\item{prob_model}{a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = \eqn{\texttt{R}})}
 
 \item{loss_function}{Define which loss function is gonna be used}
 
 \item{epsilon}{The epsilon in the loss function used from the SVR implementation.}
 
-\item{beta}{The correlation parameter $\beta$ which calibrate the penalisation of each kernel performance.}
+\item{beta}{The correlation parameter \eqn{\beta} which calibrate the penalisation of each kernel performance.}
 }
 \description{
 Call the Random Machines model for a regression or classification task.

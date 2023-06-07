@@ -22,13 +22,13 @@ sim_class(
 
 \item{ratio}{Ratio between class A and class B}
 
-\item{mean_one}{Mean of $X_{1}$}
+\item{mean_one}{Mean of \eqn{X_{1}}.}
 
-\item{sd_one}{Standard deviation of $X_{1}$}
+\item{sd_one}{Standard deviation of \eqn{X_{1}}.}
 
-\item{mean_two}{Mean of $X_{2}$}
+\item{mean_two}{Mean of \eqn{X_{2}}}
 
-\item{sd_two}{Standard devation of $X_{2}$}
+\item{sd_two}{Standard devation of \eqn{X_{2}}}
 
 \item{seed}{Setting a seed for reproducibility of results. The default is NULL}
 }

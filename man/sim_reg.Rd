@@ -2,7 +2,7 @@
 % Please edit documentation in R/simulation_examples.R
 \name{sim_reg}
 \alias{sim_reg}
-\title{Simple regression $y = x_{1}^{2} + e^{x_{2}^{2}} + \varepsilon$ case based on Ara et. al 2022}
+\title{Simple regression \eqn{y = x_{1}^{2} + e^{x_{2}^{2}} + \varepsilon} case based on Ara et. al 2022}
 \usage{
 sim_reg(n, seed = NULL)
 }
@@ -15,7 +15,7 @@ sim_reg(n, seed = NULL)
 A simulated data.frame with two predictors and the target variable.
 }
 \description{
-Simple regression $y = x_{1}^{2} + e^{x_{2}^{2}} + \varepsilon$ case based on Ara et. al 2022
+Simple regression \eqn{y = x_{1}^{2} + e^{x_{2}^{2}} + \varepsilon} case based on Ara et. al 2022
 }
 \examples{
 library(rmachines)

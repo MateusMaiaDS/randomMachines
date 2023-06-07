@@ -4,12 +4,14 @@
 \alias{predict.rm_model_class}
 \title{Prediction function for the rm_class_model}
 \usage{
-\method{predict}{rm_model_class}(mod, newdata)
+predict.rm_model_class(object, newdata, ...)
 }
 \arguments{
-\item{mod}{A fitted RM model object of class "rm_model"}
+\item{object}{A fitted RM model object of class "rm_model"}
 
 \item{newdata}{A data frame or matrix containing the new data to be predicted}
+
+\item{...}{currently not used.}
 }
 \value{
 A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`

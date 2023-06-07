@@ -5,10 +5,10 @@
 #' @param n Sample size
 #' @param p Number of predictors
 #' @param ratio Ratio between class A and class B
-#' @param mean_one Mean of $X_{1}$
-#' @param sd_one Standard deviation of $X_{1}$
-#' @param mean_two Mean of $X_{2}$
-#' @param sd_two Standard devation of $X_{2}$
+#' @param mean_one Mean of \eqn{X_{1}}.
+#' @param sd_one Standard deviation of \eqn{X_{1}}.
+#' @param mean_two Mean of \eqn{X_{2}}
+#' @param sd_two Standard devation of \eqn{X_{2}}
 #' @param seed Setting a seed for reproducibility of results. The default is NULL
 #' @return A simulated data.frame with two predictors for a binary classification problem
 #'
@@ -43,7 +43,7 @@ sim_class <- function(n, p = 2 ,ratio = 0.5 , mean_one = 0,
 }
 
 
-#' Simple regression $y = x_{1}^{2} + e^{x_{2}^{2}} + \varepsilon$ case based on Ara et. al 2022
+#' Simple regression \eqn{y = x_{1}^{2} + e^{x_{2}^{2}} + \varepsilon} case based on Ara et. al 2022
 #'
 #' @param n Sample size
 #' @param seed Define a seed to run the simulation. NULL is the default
