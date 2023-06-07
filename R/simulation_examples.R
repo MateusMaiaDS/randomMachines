@@ -65,7 +65,7 @@ sim_reg <- function(n,seed= NULL){
         colnames(x) <- paste0("x.",1:2)
 
         # Generating the y
-        y  <- x[,1]^2 + exp(-x[,2]^2) + stats::rnorm(n = n,mean = 0,sd = sqrt(0.25))
+        y  <- x[,1]^2 + exp(-x[,2]^2) + stats::rnorm(n = n,mean = 0,sd = sqrt(0.0001))
 
         return(data.frame(x,y=y))
 }

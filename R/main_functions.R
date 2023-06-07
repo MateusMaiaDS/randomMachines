@@ -1,4 +1,4 @@
-#' Call the Random Machines model for a regression or classification task.
+#' Fitting Random Machines model
 #'
 #' @param formula Insert the formula of the model
 #' @param train the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N}} used to train the model
