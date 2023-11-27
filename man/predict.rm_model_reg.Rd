@@ -2,12 +2,12 @@
 % Please edit documentation in R/main_functions.R
 \name{predict.rm_model_reg}
 \alias{predict.rm_model_reg}
-\title{Prediction function for the rm_reg_model}
+\title{Prediction function for the rm_reg}
 \usage{
 predict.rm_model_reg(object, newdata, ...)
 }
 \arguments{
-\item{object}{A fitted RM model object of reg "rm_model"}
+\item{object}{A fitted RM model object of \code{rm_reg}.}
 
 \item{newdata}{A data frame or matrix containing the new data to be predicted}
 

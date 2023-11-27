@@ -1,31 +1,55 @@
-#' Fitting Random Machines model
+#' Fit a Random Machines model
 #'
-#' @param formula Insert the formula of the model
-#' @param train the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N}} used to train the model
-#' @param validation the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V}} used to calculate probabilities \eqn{\lambda_{r}}
-#' @param boots_size number of bootstrap samples
-#' @param cost it is the "C" constant of the regularisation of the SVM Lagrange formulation
-#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The default value is \eqn{\texttt{NULL}}
-#' @param automatic_tuning boolean to define if the kernel hyperparameters will be selected using the \eqn{\texttt{sigest}} from the \eqn{\texttt{ksvm}} function
+#' \code{random_machines()} adjust a Random Machines model for both classification
+#' and continuous regression tasks.
+#'
+#' @param formula an object of class \code{stats::formula()}: it should contain a
+#'   symbolic description of the model to be fitted, indicating the dependent
+#'   variable and all predictors that should be included.
+#' @param train the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
+#'   \right)  \right\}_{i=1}^{N}} used to train the model.
+#' @param validation the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
+#'   \right)  \right\}_{i=1}^{V}} used to calculate probabilities
+#'   \eqn{\lambda_{r}}.
+#' @param B number of bootstrap samples.
+#' @param cost the \eqn{C}-constant term of the regularization on the Lagrange
+#'   formulation/
+#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The
+#'   default value is \eqn{\texttt{NULL}}
+#' @param automatic_tuning boolean to define if the kernel hyperparameters will
+#'   be selected using the \eqn{\texttt{sigest}} from the \eqn{\texttt{ksvm}}
+#'   function
 #' @param gamma_rbf the hyperparameter \eqn{\gamma_{RBF}} used in the RBF kernel
-#' @param gamma_lap the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian kernel
+#' @param gamma_lap the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian
+#'   kernel
 #' @param degree the degree of used in the Polynomial kernel
 #' @param poly_scale the scale parameter from Polynomial kernel
 #' @param offset the offset parameter from the Polynomial kernel
 #' @param gamma_cau the offset parameter from the Cauchy kernel
 #' @param d_t ??
-#' @param kernels the vector with the kernel functions that will me used in the random machines.
-#' @param prob_model a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = \eqn{\texttt{R}})
+#' @param kernels the vector with the kernel functions that will me used in the
+#'   random machines.
+#' @param prob_model a boolean to define if the algorithm will be using a
+#'   probabilistic approach to the define the predictions (default =
+#'   \eqn{\texttt{R}})
 #' @param loss_function Define which loss function is gonna be used
-#' @param epsilon The epsilon in the loss function used from the SVR implementation.
-#' @param beta The correlation parameter \eqn{\beta} which calibrate the penalisation of each kernel performance.
+#' @param epsilon The epsilon in the loss function used from the SVR
+#'   implementation.
+#' @param beta The correlation parameter \eqn{\beta} which calibrate the
+#'   penalisation of each kernel performance.
 #'
 #' @importMethodsFrom kernlab predict
+#' @return A \code{rm_prob} class object for probabilistic approach of Random
+#'   Machines. A \code{rm_class} class object for a classification model, and
+#'   \code{rm_reg} for the regression version.
+#' @section Details:
+#'
+#' Because of blablablabla, there is nothing
 #' @export
 random_machines <- function(formula,
                                 train,
                                 validation,
-                                boots_size = 25,
+                                B = 25,
                                 cost = 10,
                                 seed.bootstrap = NULL,
                                 automatic_tuning = FALSE,
@@ -57,7 +81,7 @@ random_machines <- function(formula,
       rm_mod <- random_machines_prob(formula = formula,
                            train = train,
                            validation = validation,
-                           boots_size = boots_size,
+                           B = B,
                            cost = cost,
                            seed.bootstrap = seed.bootstrap,
                            automatic_tuning = automatic_tuning,
@@ -73,7 +97,7 @@ random_machines <- function(formula,
      rm_mod <- random_machines_acc(formula = formula,
                                     train = train,
                                     validation = validation,
-                                    boots_size = boots_size,
+                                    B = B,
                                     cost = cost,
                                     seed.bootstrap = seed.bootstrap,
                                     automatic_tuning = automatic_tuning,
@@ -89,7 +113,7 @@ random_machines <- function(formula,
      rm_mod <- regression_random_machines(formula = formula,
                                           train = train,
                                           validation = validation,
-                                          boots_size = boots_size,
+                                          B = B,
                                           cost = cost,
                                           seed.bootstrap = seed.bootstrap,
                                           automatic_tuning = automatic_tuning,
@@ -110,7 +134,7 @@ random_machines <- function(formula,
 random_machines_prob <- function(formula,
                                  train,
                                  validation,
-                                 boots_size = 25,
+                                 B = 25,
                                  cost = 10,
                                  seed.bootstrap = NULL,
                                  automatic_tuning = FALSE,
@@ -251,10 +275,10 @@ random_machines_prob <- function(formula,
   prob_weights <- log_brier / sum(log_brier)
   prob_weights <- ifelse(prob_weights < 0, 0, prob_weights) # Avoiding negative values of probabilities
 
-  models <- rep(list(0), boots_size)
-  boots_sample <- list(rep(boots_size))
-  out_of_bag <- list(rep(boots_size))
-  boots_index_row <- rep(list(nrow(train)) ,boots_size)
+  models <- rep(list(0), B)
+  boots_sample <- list(rep(B))
+  out_of_bag <- list(rep(B))
+  boots_index_row <- rep(list(nrow(train)) ,B)
   at_least_one <- NULL
 
   # Sampling the bootstrap samples
@@ -327,7 +351,7 @@ random_machines_prob <- function(formula,
   }
 
   # Sampling different kernel functions
-  random_kernel <- sample(kernel_type, boots_size, replace = TRUE, prob = prob_weights)
+  random_kernel <- sample(kernel_type, B, replace = TRUE, prob = prob_weights)
 
   if (automatic_tuning) {
     models <- mapply(boots_sample, random_kernel,FUN = function(boot_sample,rand_kern){
@@ -420,7 +444,7 @@ random_machines_prob <- function(formula,
         prob_weights[2]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -435,7 +459,7 @@ random_machines_prob <- function(formula,
         prob_weights[3]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -451,7 +475,7 @@ random_machines_prob <- function(formula,
         prob_weights[4]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -468,7 +492,7 @@ random_machines_prob <- function(formula,
         prob_weights[5]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -487,7 +511,7 @@ random_machines_prob <- function(formula,
         prob_weights[6]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -497,7 +521,7 @@ random_machines_prob <- function(formula,
     print("The number of kernel isn't compatible")
   }
 
-  attr(model_result, "class") <- "rm_model"
+  attr(model_result, "class") <- "rm_prob"
   return(model_result)
 }
 
@@ -505,7 +529,7 @@ random_machines_prob <- function(formula,
 random_machines_acc <- function(formula,
                                  train,
                                  validation,
-                                 boots_size = 25,
+                                 B = 25,
                                  cost = 10,
                                  seed.bootstrap = NULL,
                                  automatic_tuning = FALSE,
@@ -651,10 +675,10 @@ random_machines_acc <- function(formula,
   prob_weights <- log_acc / sum(log_acc)
   prob_weights <- ifelse(prob_weights < 0, 0, prob_weights)
 
-  models <- rep(list(0), boots_size)
-  boots_sample <- list(rep(boots_size))
-  out_of_bag <- list(rep(boots_size))
-  boots_index_row <- rep(list(nrow(train)) ,boots_size)
+  models <- rep(list(0), B)
+  boots_sample <- list(rep(B))
+  out_of_bag <- list(rep(B))
+  boots_index_row <- rep(list(nrow(train)) ,B)
   at_least_one <- NULL
 
   # Sampling the bootstrap samples
@@ -727,7 +751,7 @@ random_machines_acc <- function(formula,
   }
 
   # Sampling different kernel functions
-  random_kernel <- sample(kernel_type, boots_size, replace = TRUE, prob = prob_weights)
+  random_kernel <- sample(kernel_type, B, replace = TRUE, prob = prob_weights)
 
   if (automatic_tuning) {
     models <- mapply(boots_sample, random_kernel,FUN = function(boot_sample,rand_kern){
@@ -819,7 +843,7 @@ random_machines_acc <- function(formula,
         prob_weights[2]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -835,7 +859,7 @@ random_machines_acc <- function(formula,
         prob_weights[3]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -852,7 +876,7 @@ random_machines_acc <- function(formula,
         prob_weights[4]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -869,7 +893,7 @@ random_machines_acc <- function(formula,
         prob_weights[5]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -887,7 +911,7 @@ random_machines_acc <- function(formula,
         prob_weights[6]
       ), kern_names_final), model_params = list(
         class_name = class_name,
-        boots_size = boots_size, cost = cost, gamma_rbf = gamma_rbf,
+        B = B, cost = cost, gamma_rbf = gamma_rbf,
         gamma_lap = gamma_lap, degree = degree
       ), bootstrap_models = models,
       bootstrap_samples = boots_sample,
@@ -898,7 +922,7 @@ random_machines_acc <- function(formula,
     print("The number of kernel isn't compatible")
   }
 
-  attr(model_result, "class") <- "rm_model_class"
+  attr(model_result, "class") <- "rm_class"
   return(model_result)
 }
 
@@ -906,7 +930,7 @@ random_machines_acc <- function(formula,
 regression_random_machines<-function(formula,#Formula that will be used
                                      train,#The Training set
                                      validation,#The validation set
-                                     boots_size=25, #B correspoding to the number of bootstrap samples
+                                     B=25, #B correspoding to the number of bootstrap samples
                                      cost=1,#Cost parameter of SVM
                                      gamma_rbf=1,#Gamma used in Table 1.
                                      gamma_lap=1,
@@ -984,10 +1008,10 @@ regression_random_machines<-function(formula,#Formula that will be used
 
 
   #----Defining the variables----
-  models<-rep(list(0),boots_size)#Creating the list of models
-  boots_sample<-list(rep(boots_size)) #Argument that will be passed in the map function
-  out_of_bag<-list(rep(boots_size)) #OOB samples object
-  boots_index_row<- rep(list(nrow(train)),boots_size)
+  models<-rep(list(0),B)#Creating the list of models
+  boots_sample<-list(rep(B)) #Argument that will be passed in the map function
+  out_of_bag<-list(rep(B)) #OOB samples object
+  boots_index_row<- rep(list(nrow(train)),B)
 
   #====================================================
 
@@ -1012,7 +1036,7 @@ regression_random_machines<-function(formula,#Formula that will be used
 
   #Here is defined which kernel will be used to heach model
   random_kernel<-sample(c('rbfdot','polydot','laplacedot','vanilladot'),
-                        boots_size,replace = TRUE,prob = prob_weights)
+                        B,replace = TRUE,prob = prob_weights)
 
   if(automatic_tuning){
     models <- mapply(boots_sample,random_kernel,FUN = function(boot_sample,rand_kern){kernlab::ksvm(formula, data=boot_sample,type="eps-svr",
@@ -1086,14 +1110,14 @@ regression_random_machines<-function(formula,#Formula that will be used
                                                                 RBF_Kern=prob_weights[1],
                                                                 LAP_Kern=prob_weights[3]),
                        model_params=list(class_name=class_name,
-                                         boots_size=boots_size,
+                                         B=B,
                                          cost=cost,
                                          gamma=gamma,
                                          degree=degree),bootstrap_models=models,bootstrap_samples=boots_sample,
                        probabilities=prob_weights,
                        init_rmse=rmse,kernel_weight_norm=kernel_weight_norm,
                        list_kernels=random_kernel,predict_oob=predict_oobg,botse=boots_error)
-  attr(model_result,"class")<-"rm_model_reg"
+  attr(model_result,"class")<-"rm_reg"
   #=============================
   return(model_result)
 }
@@ -1105,7 +1129,7 @@ regression_random_machines<-function(formula,#Formula that will be used
 #'
 #' This function predicts the outcome for a RM object model using new data
 #'
-#' @param object A fitted RM model object of class "rm_model"
+#' @param object A fitted RM model object of class \code{rm_prob}, \code{rm_class}.
 #' @param newdata A data frame or matrix containing the new data to be predicted
 #' @param ... currently not used.
 #' @importMethodsFrom kernlab predict
@@ -1117,7 +1141,7 @@ regression_random_machines<-function(formula,#Formula that will be used
 #' sim_data <- rmachines::sim_class(n = 100)
 #' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
 #'
-predict.rm_model_class <- function(object, newdata,...) {
+predict.rm_class <- function(object, newdata,...) {
   # UseMethod(predict,rm_model)
   if (object$prob_model) {
     predict_new <- lapply(object$bootstrap_models, function(x) {predict(x, newdata = newdata, type = "probabilities")[, 2]})
@@ -1140,11 +1164,11 @@ predict.rm_model_class <- function(object, newdata,...) {
   }
 }
 
-#' Prediction function for the rm_reg_model
+#' Prediction function for the rm_reg
 #'
 #' This function predicts the outcome for a RM object model using new data
 #'
-#' @param object A fitted RM model object of reg "rm_model"
+#' @param object A fitted RM model object of \code{rm_reg}.
 #' @param newdata A data frame or matrix containing the new data to be predicted
 #' @param ... currently not used.
 #'

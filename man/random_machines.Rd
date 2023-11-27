@@ -2,13 +2,13 @@
 % Please edit documentation in R/main_functions.R
 \name{random_machines}
 \alias{random_machines}
-\title{Fitting Random Machines model}
+\title{Fit a Random Machines model}
 \usage{
 random_machines(
   formula,
   train,
   validation,
-  boots_size = 25,
+  B = 25,
   cost = 10,
   seed.bootstrap = NULL,
   automatic_tuning = FALSE,
@@ -27,23 +27,33 @@ random_machines(
 )
 }
 \arguments{
-\item{formula}{Insert the formula of the model}
+\item{formula}{an object of class \code{\link[stats::formula()]{formula}}: it should contain a
+symbolic description of the model to be fitted, indicating the dependent
+variable and all predictors that should be included.}
 
-\item{train}{the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{N}} used to train the model}
+\item{train}{the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
+\right)  \right\}_{i=1}^{N}} used to train the model.}
 
-\item{validation}{the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)  \right\}_{i=1}^{V}} used to calculate probabilities \eqn{\lambda_{r}}}
+\item{validation}{the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
+\right)  \right\}_{i=1}^{V}} used to calculate probabilities
+\eqn{\lambda_{r}}.}
 
-\item{boots_size}{number of bootstrap samples}
+\item{B}{number of bootstrap samples.}
 
-\item{cost}{it is the "C" constant of the regularisation of the SVM Lagrange formulation}
+\item{cost}{the \eqn{C}-constant term of the regularization on the Lagrange
+formulation/}
 
-\item{seed.bootstrap}{setting a seed to replicate bootstrap sampling. The default value is \eqn{\texttt{NULL}}}
+\item{seed.bootstrap}{setting a seed to replicate bootstrap sampling. The
+default value is \eqn{\texttt{NULL}}}
 
-\item{automatic_tuning}{boolean to define if the kernel hyperparameters will be selected using the \eqn{\texttt{sigest}} from the \eqn{\texttt{ksvm}} function}
+\item{automatic_tuning}{boolean to define if the kernel hyperparameters will
+be selected using the \eqn{\texttt{sigest}} from the \eqn{\texttt{ksvm}}
+function}
 
 \item{gamma_rbf}{the hyperparameter \eqn{\gamma_{RBF}} used in the RBF kernel}
 
-\item{gamma_lap}{the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian kernel}
+\item{gamma_lap}{the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian
+kernel}
 
 \item{degree}{the degree of used in the Polynomial kernel}
 
@@ -55,16 +65,33 @@ random_machines(
 
 \item{d_t}{??}
 
-\item{kernels}{the vector with the kernel functions that will me used in the random machines.}
+\item{kernels}{the vector with the kernel functions that will me used in the
+random machines.}
 
-\item{prob_model}{a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = \eqn{\texttt{R}})}
+\item{prob_model}{a boolean to define if the algorithm will be using a
+probabilistic approach to the define the predictions (default =
+\eqn{\texttt{R}})}
 
 \item{loss_function}{Define which loss function is gonna be used}
 
-\item{epsilon}{The epsilon in the loss function used from the SVR implementation.}
+\item{epsilon}{The epsilon in the loss function used from the SVR
+implementation.}
 
-\item{beta}{The correlation parameter \eqn{\beta} which calibrate the penalisation of each kernel performance.}
+\item{beta}{The correlation parameter \eqn{\beta} which calibrate the
+penalisation of each kernel performance.}
+}
+\value{
+A \code{rm_prob} class object for probabilistic approach of Random
+  Machines. A \code{rm_class} class object for a classification model, and
+  \code{rm_reg} for the regression version.
 }
 \description{
-Fitting Random Machines model
+\code{random_machines()} adjust a Random Machines model for both classification
+and continuous regression tasks.
 }
+\section{Details}{
+
+
+Because of blablablabla, there is nothing
+}
+
