@@ -3,7 +3,7 @@
 #' \code{random_machines()} adjust a Random Machines model for both classification
 #' and continuous regression tasks.
 #'
-#' @param formula an object of class \code{stats::formula()}: it should contain a
+#' @param formula an object of class \code{formula()}: it should contain a
 #'   symbolic description of the model to be fitted, indicating the dependent
 #'   variable and all predictors that should be included.
 #' @param train the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
