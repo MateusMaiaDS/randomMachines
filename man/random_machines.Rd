@@ -27,7 +27,7 @@ random_machines(
 )
 }
 \arguments{
-\item{formula}{an object of class \code{\link[stats::formula()]{formula}}: it should contain a
+\item{formula}{an object of class [?stats::formula()]: it should contain a
 symbolic description of the model to be fitted, indicating the dependent
 variable and all predictors that should be included.}
 
