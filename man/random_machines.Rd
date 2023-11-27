@@ -27,9 +27,9 @@ random_machines(
 )
 }
 \arguments{
-\item{formula}{an object of class [?stats::formula()]: it should contain a
+\item{formula}{an object of class \code{?stats::formula()}: it should contain a
 symbolic description of the model to be fitted, indicating the dependent
-variable and all predictors that should be included.}
+variable and all predictors that should be included \code{?predict.rm_class()}.}
 
 \item{train}{the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
 \right)  \right\}_{i=1}^{N}} used to train the model.}
