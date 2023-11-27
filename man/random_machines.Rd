@@ -6,8 +6,8 @@
 \description{Random Machines is an ensemble model which use the combination of different kernel functions to improve the diversity in the bagging approach improving the predictions.
 
 \itemize{
-     \item For a binary classification problem \eqn{\mathbin{{ G(\boldsymbol{x_{i}})= \text{sgn} \left( \sum_{b}^{B}w_{b}g_{b}(\boldsymbol{x_{i}})\right), }}{\mathbin{{ G(\boldsymbol{x_{i}})= \text{sgn} \left( \sum_{b}^{B}w_{b}g_{b}(\boldsymbol{x_{i}})\right). }}}}
-     \item For a numeric response \eqn{G(\boldsymbol{x_{i}})= \text{sgn} \left( \sum_{b}^{B}w_{b}g_{b}(\boldsymbol{x_{i}})\right)}{G(\boldsymbol{x_{i}})= \text{sgn} \left( \sum_{b}^{B}w_{b}g_{b}(\boldsymbol{x_{i}})\right)}
+     \item For a binary classification problem \eqn{\mathbin{{ G(\boldsymbol{x_{i}})= \text{sgn} \left( \sum_{b}^{B}w_{b}g_{b}(\boldsymbol{x_{i}})\right), }}}
+     \item For a numeric response \eqn{G(\boldsymbol{x_{i}})= \sum_{b}^{B}w_{b}g_{b}(\boldsymbol{x_{i}})}
 }
 
 }
