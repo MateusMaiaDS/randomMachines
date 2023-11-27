@@ -14,7 +14,7 @@
 
 \usage{
 random_machines(
-     y~.,
+     formula,
      train,validation,
      B = 25, cost = 1,
      seed.bootstrap = NULL,
