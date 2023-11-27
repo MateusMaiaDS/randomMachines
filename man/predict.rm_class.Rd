@@ -7,7 +7,7 @@
 predict.rm_class(object, newdata, ...)
 }
 \arguments{
-\item{object}{A fitted RM model object of class \code{rm_prob}, \code{rm_class}.}
+\item{object}{A fitted RM model object of class  \code{rm_class}.}
 
 \item{newdata}{A data frame or matrix containing the new data to be predicted}
 

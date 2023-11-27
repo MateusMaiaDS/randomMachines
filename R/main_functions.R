@@ -1,48 +1,6 @@
-#' Fit a Random Machines model
-#'
-#' \code{random_machines()} adjust a Random Machines model for both classification
-#' and continuous regression tasks.
-#'
-#' @param formula an object of class \link[=formula]{formula}: it should contain a
-#'   symbolic description of the model to be fitted, indicating the dependent
-#'   variable and all predictors that should be included.
-#' @param train the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
-#'   \right)  \right\}_{i=1}^{N}} used to train the model.
-#' @param validation the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}
-#'   \right)  \right\}_{i=1}^{V}} used to calculate probabilities
-#'   \eqn{\lambda_{r}}.
-#' @param B number of bootstrap samples.
-#' @param cost the \eqn{C}-constant term of the regularization on the Lagrange
-#'   formulation/
-#' @param seed.bootstrap setting a seed to replicate bootstrap sampling. The
-#'   default value is \eqn{\texttt{NULL}}
-#' @param automatic_tuning boolean to define if the kernel hyperparameters will
-#'   be selected using the \eqn{\texttt{sigest}} from the \eqn{\texttt{ksvm}}
-#'   function
-#' @param gamma_rbf the hyperparameter \eqn{\gamma_{RBF}} used in the RBF kernel
-#' @param gamma_lap the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian
-#'   kernel
-#' @param degree the degree of used in the Polynomial kernel
-#' @param poly_scale the scale parameter from Polynomial kernel
-#' @param offset the offset parameter from the Polynomial kernel
-#' @param gamma_cau the offset parameter from the Cauchy kernel
-#' @param d_t ??
-#' @param kernels the vector with the kernel functions that will me used in the
-#'   random machines.
-#' @param prob_model a boolean to define if the algorithm will be using a
-#'   probabilistic approach to the define the predictions (default =
-#'   \eqn{\texttt{R}})
-#' @param loss_function Define which loss function is gonna be used
-#' @param epsilon The epsilon in the loss function used from the SVR
-#'   implementation.
-#' @param beta The correlation parameter \eqn{\beta} which calibrate the
-#'   penalisation of each kernel performance.
-#'
 #' @importMethodsFrom kernlab predict
-#' @return A \code{rm_prob} class object for probabilistic approach of Random
-#'   Machines. A \code{rm_class} class object for a classification model, and
+#' @return  A \code{rm_class} class object for a classification model, and
 #'   \code{rm_reg} for the regression version.
-#' @section Details:
 #'
 #' Because of blablablabla, there is nothing
 #' @export
@@ -521,7 +479,7 @@ random_machines_prob <- function(formula,
     print("The number of kernel isn't compatible")
   }
 
-  attr(model_result, "class") <- "rm_prob"
+  attr(model_result, "class") <- "rm_class"
   return(model_result)
 }
 
@@ -1129,7 +1087,7 @@ regression_random_machines<-function(formula,#Formula that will be used
 #'
 #' This function predicts the outcome for a RM object model using new data
 #'
-#' @param object A fitted RM model object of class \code{rm_prob}, \code{rm_class}.
+#' @param object A fitted RM model object of class  \code{rm_class}.
 #' @param newdata A data frame or matrix containing the new data to be predicted
 #' @param ... currently not used.
 #' @importMethodsFrom kernlab predict
@@ -1181,7 +1139,7 @@ predict.rm_class <- function(object, newdata,...) {
 #' sim_data <- rmachines::sim_reg(n = 100)
 #' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
 #'
-predict.rm_model_reg <- function(object, newdata,...) {
+predict.rm_reg <- function(object, newdata,...) {
   # Accessing training error
   pred_df_test<-apply(mapply(object$bootstrap_models,object$kernel_weight_norm,FUN = function(mod, k_w_n){(predict(mod,newdata)*k_w_n)}),1,sum) #Multiplying the weights
   return(pred_df_test)
