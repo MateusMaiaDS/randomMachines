@@ -93,8 +93,9 @@ random_machines(
      The correlation parameter \eqn{\beta} which calibrate the penalisation of each kernel performance.
      }
 }
+\value{ \code{random_machines()} returns an object of \code{\link[=class]{class}} "rm_class" for classification tasks or "rm_reg" for if the target variable is a continuous numerical response. See \code{\link[=predict.rm_class]{predict.rm_class}} or \code{\link[=predict.rm_reg]{predict.rm_reg}} for more details of how obtain predictions from each model respectively.}
 \details{
-     bla bla bla bla
+     The Random Machines is an ensemble method which combines the bagging procedure proposed by Breiman (1996), using Support Vector Machine models as base learners jointly with a random selection of kernel functions that add diversity to the ensemble without harm its predictive performance.
 }
 \references{
 
