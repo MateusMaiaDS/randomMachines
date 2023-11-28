@@ -36,7 +36,7 @@ random_machines(
 
 \arguments{
      \item{formula}{
-     formula an object of class \link[=formula]{formula}: it should contain a symbolic description of the model to be fitted, indicating the dependent variable and all predictors that should be included.
+     formula an object of class \code{\link{formula}}: it should contain a symbolic description of the model to be fitted, indicating the dependent variable and all predictors that should be included.
      }
      \item{train}{
      the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)\right\}_{i=1}^{N}} used to train the model.
@@ -50,8 +50,8 @@ random_machines(
      \item{cost}{
      the \eqn{C}-constant term of the regularization on the Lagrange formulation.
      }
-     \item{seed.boostrap}{
-     setting a seed to replicate bootstrap sampling. The default value is \code{{NULL}}.
+     \item{seed.bootstrap}{
+     setting a seed to replicate bootstrap sampling. The default value is \code{NULL}.
      }
      \item{automatic_tuning}{
      boolean to define if the kernel hyperparameters will be selected using the \code{sigest} from the \code{ksvm} function.
@@ -93,7 +93,7 @@ random_machines(
      The correlation parameter \eqn{\beta} which calibrate the penalisation of each kernel performance.
      }
 }
-\value{ \code{random_machines()} returns an object of \code{\link[=class]{class}} "rm_class" for classification tasks or "rm_reg" for if the target variable is a continuous numerical response. See \code{\link[=predict.rm_class]{predict.rm_class}} or \code{\link[=predict.rm_reg]{predict.rm_reg}} for more details of how obtain predictions from each model respectively.}
+\value{ \code{random_machines()} returns an object of \code{\link{class}} "rm_class" for classification tasks or "rm_reg" for if the target variable is a continuous numerical response. See \code{\link[=predict.rm_class]{predict.rm_class}} or \code{\link{predict.rm_reg}} for more details of how obtain predictions from each model respectively.}
 \details{
      The Random Machines is an ensemble method which combines the bagging procedure proposed by Breiman (1996), using Support Vector Machine models as base learners jointly with a random selection of kernel functions that add diversity to the ensemble without harm its predictive performance.
 }
