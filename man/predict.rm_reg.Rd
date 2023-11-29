@@ -2,26 +2,19 @@
 % Please edit documentation in R/main_functions.R
 \name{predict.rm_reg}
 \alias{predict.rm_reg}
-\title{Prediction function for the rm_reg}
-\usage{
-predict.rm_reg(object, newdata, ...)
-}
+\alias{predict.rm_reg,}
+\alias{predict}
+\title{Predict method for rm_reg class}
 \arguments{
-\item{object}{A fitted RM model object of \code{rm_reg}.}
+\item{object}{An object of class "rm_reg"}
 
-\item{newdata}{A data frame or matrix containing the new data to be predicted}
+\item{newdata}{New data for prediction}
 
-\item{...}{currently not used.}
+\item{...}{other arguments}
 }
 \value{
-A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and reges in case of `prob_model = FALSE`
+Predicted values
 }
 \description{
-This function predicts the outcome for a RM object model using new data
-}
-\examples{
-library(rmachines)
-sim_data <- rmachines::sim_reg(n = 100)
-rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
-
+Predict method for rm_reg class
 }

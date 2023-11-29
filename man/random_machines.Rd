@@ -1,7 +1,5 @@
 \name{random_machines}
 \alias{random_machines}
-\alias{predict.rm_class}
-\alias{predict.rm_reg}
 \title{Random Machines}
 \description{Random Machines is an ensemble model which use the combination of different kernel functions to improve the diversity in the bagging approach improving the predictions.
 

@@ -1,14 +1,10 @@
 #' @importMethodsFrom kernlab predict
-#' @return  A \code{rm_class} class object for a classification model, and
-#'   \code{rm_reg} for the regression version.
-#'
-#' Because of blablablabla, there is nothing
 #' @export
 random_machines <- function(formula,
                                 train,
                                 validation,
                                 B = 25,
-                                cost = 10,
+                                cost = 1,
                                 seed.bootstrap = NULL,
                                 automatic_tuning = FALSE,
                                 gamma_rbf = 1,
@@ -93,7 +89,7 @@ random_machines_prob <- function(formula,
                                  train,
                                  validation,
                                  B = 25,
-                                 cost = 10,
+                                 cost = 1,
                                  seed.bootstrap = NULL,
                                  automatic_tuning = FALSE,
                                  gamma_rbf = 1,
@@ -488,7 +484,7 @@ random_machines_acc <- function(formula,
                                  train,
                                  validation,
                                  B = 25,
-                                 cost = 10,
+                                 cost = 1,
                                  seed.bootstrap = NULL,
                                  automatic_tuning = FALSE,
                                  gamma_rbf = 1,
@@ -1122,29 +1118,27 @@ predict.rm_class <- function(object, newdata,...) {
   }
 }
 
-#' Prediction function for the rm_reg
+#' S3 class for RM regression
 #'
-#' This function predicts the outcome for a RM object model using new data
+#' @export
+setClass("rm_reg")
+
+
+#' Predict method for rm_reg class
 #'
-#' @param object A fitted RM model object of \code{rm_reg}.
-#' @param newdata A data frame or matrix containing the new data to be predicted
-#' @param ... currently not used.
-#'
-#' @importMethodsFrom kernlab predict
-#'
-#' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and reges in case of `prob_model = FALSE`
-#'
-#' @examples
-#' library(rmachines)
-#' sim_data <- rmachines::sim_reg(n = 100)
-#' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
-#'
+#' @param object An object of class "rm_reg"
+#' @param newdata New data for prediction
+#' @param ... other arguments
+#' @return Predicted values
+#' @export
+#' @method predict rm_reg
+#' @aliases predict.rm_reg, predict
+#' @usage NULL
 predict.rm_reg <- function(object, newdata,...) {
   # Accessing training error
-  pred_df_test<-apply(mapply(object$bootstrap_models,object$kernel_weight_norm,FUN = function(mod, k_w_n){(predict(mod,newdata)*k_w_n)}),1,sum) #Multiplying the weights
+  pred_df_test <- apply(mapply(object$bootstrap_models, object$kernel_weight_norm, FUN = function(mod, k_w_n) {(predict(mod, newdata) * k_w_n)}), 1, sum) # Multiplying the weights
   return(pred_df_test)
 }
-
 
 #' Brier Score function
 #'
