@@ -55,10 +55,10 @@ random_machines(
      boolean to define if the kernel hyperparameters will be selected using the \code{sigest} from the \code{ksvm} function.
      }
      \item{gamma_rbf}{
-     the hyperparameter \eqn{\gamma_{RBF}} used in the RBF kernel.
+     the hyperparameter \eqn{\gamma_{g}} used in the RBF kernel.
      }
      \item{gamma_lap}{
-     the hyperparameter \eqn{\gamma_{LAP}} used in the Laplacian kernel.
+     the hyperparameter \eqn{\gamma_{l}} used in the Laplacian kernel.
      }
      \item{degree}{
      the degree used in the Polynomial kernel.
@@ -70,7 +70,7 @@ random_machines(
      the offset parameter from the Polynomial kernel.
      }
      \item{gamma_cau}{
-     the offset arameter from the Cauchy kernel.
+     the hyperparameter \eqn{\gamma_{c}} used in the Cauchy kernel.
      }
      \item{d_t}{
      ??
@@ -93,8 +93,19 @@ random_machines(
 }
 \value{ \code{random_machines()} returns an object of \code{\link{class}} "rm_class" for classification tasks or "rm_reg" for if the target variable is a continuous numerical response. See \code{\link[=predict.rm_class]{predict.rm_class}} or \code{\link{predict.rm_reg}} for more details of how obtain predictions from each model respectively.}
 \details{
-     The Random Machines is an ensemble method which combines the bagging procedure proposed by Breiman (1996), using Support Vector Machine models as base learners jointly with a random selection of kernel functions that add diversity to the ensemble without harm its predictive performance.
+     The Random Machines is an ensemble method which combines the bagging procedure proposed by Breiman (1996), using Support Vector Machine models as base learners jointly with a random selection of kernel functions that add diversity to the ensemble without harm its predictive performance. The kernel functions \eqn{k(x,y)} are described by the functions below,
+
+\itemize{
+\item {Linear Kernel}: \eqn{k(x,y) = (x\cdot y)}
+\item {Polynomial Kernel}: \eqn{k(x,y) = \left(scale( x\cdot y) + offset\right)^{degree}}
+\item {Gaussian Kernel}: \eqn{k(x,y) = e^{-\gamma_{g}||x-y||^2}}
+\item {Laplacian Kernel}:  \eqn{k(x,y) = e^{-\gamma_{\ell}||x-y||}}
+\item {Cauchy Kernel}: \eqn{k(x,y) = \frac{1}{1 + \frac{||x-y||^{2}}{\gamma_{c}}}}
+\item {Student's t Kernel}: \eqn{k(x,y) = \frac{1}{1 + ||x-y||^{2}}}
 }
+
+}
+
 \references{
 
 Ara, Anderson, et al. "Regression random machines: An ensemble support vector regression model with free kernel choice." Expert Systems with Applications 202 (2022): 117107.
