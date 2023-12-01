@@ -110,6 +110,20 @@ Anderson Ara: \email{ara@ufpr.br}
 }
 \examples{
 #' library(rmachines)
+#'
+#' # Simulation from a binary output context
 #' sim_data <- rmachines::sim_class(n = 100)
-#' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
+#' # Setting the training and validation set
+#' train_index <- sample(1:nrow(sim_data), size = round(0.7*nrow(sim_data)))
+#' sim_train <- sim_data[train_index,]
+#' sim_validation <- sim_data[-train_index,]
+#' sim_new <- rmachines::sim_class(n = 100)
+#'
+#' # Modelling Random Machines (probabilistic output)
+#' rm_mod_prob <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
+#' # Modelling Random Machines (class output)
+#' rm_mod_label <-rmachines::::random_machines(y~., train = sim_data,
+#'                                             validation = sim_data, prob_model = FALSE)
+#' # Predicting for new data
+#' y_hat <- predict(rm_mod,sim_new)
 }

@@ -3,25 +3,19 @@
 \name{predict.rm_class}
 \alias{predict.rm_class}
 \title{Prediction function for the rm_class_model}
-\usage{
-predict.rm_class(object, newdata, ...)
-}
 \arguments{
 \item{object}{A fitted RM model object of class  \code{rm_class}.}
 
-\item{newdata}{A data frame or matrix containing the new data to be predicted}
+\item{newdata}{A data frame or matrix containing the new data to be predicted.}
 
 \item{...}{currently not used.}
 }
 \value{
-A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`
+A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`.
 }
 \description{
 This function predicts the outcome for a RM object model using new data
 }
 \examples{
-library(rmachines)
-sim_data <- rmachines::sim_class(n = 100)
-rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
-
+NULL
 }

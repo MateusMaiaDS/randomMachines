@@ -2,8 +2,6 @@
 % Please edit documentation in R/main_functions.R
 \name{predict.rm_reg}
 \alias{predict.rm_reg}
-\alias{predict.rm_reg,}
-\alias{predict}
 \title{Predict method for rm_reg class}
 \arguments{
 \item{object}{An object of class "rm_reg"}

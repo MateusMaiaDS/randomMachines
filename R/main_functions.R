@@ -1079,22 +1079,26 @@ regression_random_machines<-function(formula,#Formula that will be used
 
 
 
+#' S3 class for RM classification
+#'
+#' @export
+setClass("rm_class")
+
 #' Prediction function for the rm_class_model
 #'
 #' This function predicts the outcome for a RM object model using new data
 #'
 #' @param object A fitted RM model object of class  \code{rm_class}.
-#' @param newdata A data frame or matrix containing the new data to be predicted
+#' @param newdata A data frame or matrix containing the new data to be predicted.
 #' @param ... currently not used.
 #' @importMethodsFrom kernlab predict
 #'
-#' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`
-#'
-#' @examples
-#' library(rmachines)
-#' sim_data <- rmachines::sim_class(n = 100)
-#' rm_mod <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
-#'
+#' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`.
+#' @method predict rm_class
+#' @aliases predict.rm_class
+#' @examples NULL
+#' @export
+#' @usage NULL
 predict.rm_class <- function(object, newdata,...) {
   # UseMethod(predict,rm_model)
   if (object$prob_model) {
@@ -1132,7 +1136,7 @@ setClass("rm_reg")
 #' @return Predicted values
 #' @export
 #' @method predict rm_reg
-#' @aliases predict.rm_reg, predict
+#' @aliases predict.rm_reg
 #' @usage NULL
 predict.rm_reg <- function(object, newdata,...) {
   # Accessing training error
@@ -1153,8 +1157,13 @@ brier_score <- function(prob, observed, levels){
   return(b_score)
 }
 
-#Root Mean Squared Error Function
-RMSE<-function(predicted,observed,epsilon=NULL){
+#' #Root Mean Squared Error (RMSE) Function
+#'
+#' @param predicted A vector of predicted values \eqn{\hat{\mathbf{y}}}.
+#' @param observed A vector of observed values \eqn{\mathbf{y}}.
+#' @return a the Root Mean Squared error calculated by \eqn{RMSE= \frac{1}{n}\sum_{i=1}^{n}\sqrt{\left(\hat{y}_{i}-\y_{i}\right)^{2}}}
+#' @export
+RMSE<-function(predicted,observed){
   min<-min(observed)
   max<-max(observed)
   sqrt(mean(unlist((predicted-observed)^2)))
