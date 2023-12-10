@@ -13,3 +13,5 @@ Imports:
     kernlab,
     methods,
     stats
+Depends: 
+    R (>= 2.10)
