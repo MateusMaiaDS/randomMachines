@@ -6,6 +6,10 @@ Author: Mateus Maia and Anderson Ara
 Maintainer:Maintainer: Mateus Maia Marques <mateus.maiamarques.2021@mumail.ie>, Anderson Ara <ara@ufpr.br>
 Description: 
     The "rmachines" package introduces a novel ensemble method employing Support Vector Machines (SVMs) as base learners. This powerful ensemble model is designed for both classification and regression problems, offering versatility and robust performance.
+References:
+     - Ara, Anderson, et al. "Regression random machines: An ensemble support vector regression model with free kernel choice." Expert Systems with Applications 202 (2022): 117107.
+     - Maia, Mateus, Arthur R. Azevedo, and Anderson Ara. "Predictive comparison between random machines and random forests." Journal of Data Science 19.4 (2021): 593-614.
+     - Ara, Anderson, et al. "Random machines: A bagged-weighted support vector model with free kernel choice." Journal of Data Science 19.3 (2021): 409-428.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
