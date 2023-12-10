@@ -24,7 +24,7 @@ random_machines(
      offset = 0,
      gamma_cau = 1,
      d_t = 2,
-     kernels = c("rbfdot", "polydot", "laplacedot", "vanilladot", "cauchydot"),
+     kernels = c("rbfdot", "polydot", "laplacedot", "vanilladot"),
      prob_model = T,
      loss_function = RMSE,
      epsilon = 0.1,
@@ -40,7 +40,7 @@ random_machines(
      the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)\right\}_{i=1}^{N}} used to train the model.
      }
      \item{validation}{
-     the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}\right)  \right\}_{i=1}^{V}} used to calculate probabilities \eqn{\lambda_{r}}.
+     the validation data \eqn{\left\{\left( \mathbf{x}_{i},y_{i}\right)  \right\}_{i=1}^{V}} used to calculate probabilities \eqn{\lambda_{r}}. If \code{validation = NULL},the validation set is going be selected as 0.25 partition from the training data, and the remaining partition is selected as the new training sample.
      }
      \item{B}{
      number of bootstrap samples.
@@ -73,10 +73,10 @@ random_machines(
      the hyperparameter \eqn{\gamma_{c}} used in the Cauchy kernel.
      }
      \item{d_t}{
-     ??
+     the \eqn{d_{t}}-norm from the Sudent's kernel.
      }
      \item{kernels}{
-     a vector with the name of kernel functions that will be used in the Random Machines model. The default includes all the functions: \code{c("rbfdot", "polydot", "laplacedot", "vanilladot", "cauchydot").}
+     a vector with the name of kernel functions that will be used in the Random Machines model. The default include the kernel functions: \code{c("rbfdot", "polydot", "laplacedot", "vanilladot").} The other kernel functions as \code{"cauchydot"} and \code{"tdot"} are exclusive to the binary classification setting, being prebuilt in the package.
      }
      \item{prob_model}{
      a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = \code{T}).
@@ -101,7 +101,7 @@ random_machines(
 \item {Gaussian Kernel}: \eqn{k(x,y) = e^{-\gamma_{g}||x-y||^2}}
 \item {Laplacian Kernel}:  \eqn{k(x,y) = e^{-\gamma_{\ell}||x-y||}}
 \item {Cauchy Kernel}: \eqn{k(x,y) = \frac{1}{1 + \frac{||x-y||^{2}}{\gamma_{c}}}}
-\item {Student's t Kernel}: \eqn{k(x,y) = \frac{1}{1 + ||x-y||^{2}}}
+\item {Student's t Kernel}: \eqn{k(x,y) = \frac{1}{1 + ||x-y||^{d_{t}}}}
 }
 
 }
@@ -125,16 +125,12 @@ Anderson Ara: \email{ara@ufpr.br}
 #' # Simulation from a binary output context
 #' sim_data <- rmachines::sim_class(n = 100)
 #' # Setting the training and validation set
-#' train_index <- sample(1:nrow(sim_data), size = round(0.7*nrow(sim_data)))
-#' sim_train <- sim_data[train_index,]
-#' sim_validation <- sim_data[-train_index,]
 #' sim_new <- rmachines::sim_class(n = 100)
 #'
 #' # Modelling Random Machines (probabilistic output)
-#' rm_mod_prob <- rmachines::random_machines(y~., train = sim_data, validation = sim_data)
+#' rm_mod_prob <- rmachines::random_machines(y~., train = sim_data,)
 #' # Modelling Random Machines (class output)
-#' rm_mod_label <-rmachines::::random_machines(y~., train = sim_data,
-#'                                             validation = sim_data, prob_model = FALSE)
+#' rm_mod_label <-rmachines::::random_machines(y~., train = sim_data,prob_model = FALSE)
 #' # Predicting for new data
 #' y_hat <- predict(rm_mod,sim_new)
 }

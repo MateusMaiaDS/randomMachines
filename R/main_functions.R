@@ -2,7 +2,7 @@
 #' @export
 random_machines <- function(formula,
                                 train,
-                                validation,
+                                validation = NULL,
                                 B = 25,
                                 cost = 1,
                                 seed.bootstrap = NULL,
@@ -22,12 +22,32 @@ random_machines <- function(formula,
                                 beta = 2
                                 ) {
 
+   # Selecting a validation set
+   if(is.null(validation)){
+     train_index <- sample(1:nrow(train), round(0.75*nrow(train)))
+     validation <- train[train_index,,drop = FALSE]
+     train <- train[-train_index,,drop = FALSE]
+   }
 
    # Checking the class of the training data
    if(is.numeric(train[[formula[[2]]]])){
      reg_rm <- TRUE
    } else {
      reg_rm <- FALSE
+   }
+
+   # Preventing
+   if(reg_rm){
+     valid_kernels<- c("rbfdot", "polydot", "laplacedot","vanilladot")
+     if(any(!(kernels %in% valid_kernels))){
+       stop("Insert only valid kernel functions.")
+     }
+
+   } else {
+     valid_kernels<- c("rbfdot", "polydot", "laplacedot","vanilladot", "cauchydot","tdot")
+     if(any(!(kernels %in% valid_kernels))){
+       stop("Insert only valid kernel functions.")
+     }
    }
 
    # Selecting
