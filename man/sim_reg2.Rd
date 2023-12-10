@@ -1,9 +1,8 @@
-% Please edit documentation in R/simulation_examples.R
-\name{sim_reg1}
-\alias{sim_reg1}
-\title{Simulation for a regression toy examples from Random Machines Regression 1}
+\name{sim_reg2}
+\alias{sim_reg2}
+\title{Simulation for a regression toy examples from Random Machines Regression 2}
 \usage{
-sim_reg1(n, sigma, seed = NULL)
+sim_reg2(n, sigma, seed = NULL)
 }
 \arguments{
 \item{n}{Sample size}
@@ -17,8 +16,8 @@ A simulated data.frame with two predictors and the target variable.
 }
 \description{
 Simulation toy example initially found in Scornet (2016), and used and escribed by Ara \emph{et. al} (2022).
-Inputs are 2 independent variables uniformly distributed on the interval \eqn{[-1,1]}. Outputs are generated following the equation
-\deqn{Y={X^{2}_{1}}+e^{{-{X^{2}_{2}}}} +  \varepsilon, \varepsilon \sim \mathcal{N}(0,\sigma^{2})}
+Inputs are 8 independent variables uniformly distributed on the interval \eqn{[-1,1]}. Outputs are generated following the equation
+\deqn{Y={X_{1}}{X_{2}}+{X^{2}_{3}}-{X_{4}}{X_{7}}+{X_{5}}{X_{8}}-{X^{2}_{6}}+ \varepsilon, \varepsilon \sim \mathcal{N}(0,\sigma^{2})}
 }
 \references{
 
@@ -35,5 +34,6 @@ Anderson Ara: \email{ara@ufpr.br}
 
 \examples{
 library(rmachines)
-sim_data <- sim_reg1(n=100)
+sim_data <- sim_reg2(n=100)
 }
+

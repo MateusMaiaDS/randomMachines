@@ -14,7 +14,7 @@ random_machines <- function(formula,
                                 offset = 0,
                                 gamma_cau = 1, d_t = 2,
                                 kernels = c("rbfdot", "polydot", "laplacedot",
-                                            "vanilladot", "cauchydot"),
+                                            "vanilladot"),
                                 prob_model = T,
                                 # Default parameters for the regression case
                                 loss_function = RMSE,
