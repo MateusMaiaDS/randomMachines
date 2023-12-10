@@ -1,10 +1,11 @@
 Package: rmachines
 Type: Package
-Title: rmachines: An R package 
+Title: rmachines: An Ensemble Modeling Package using Random Machines
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: The "rmachines" is an novel ensemble method using support vector machines (SVMs) as base learners. Suitable for classification and regression problems.
+Author: Mateus Maia and Anderson Ara
+Maintainer:Maintainer: Mateus Maia Marques <mateus.maiamarques.2021@mumail.ie>, Anderson Ara <ara@ufpr.br>
+Description: 
+    The "rmachines" package introduces a novel ensemble method employing Support Vector Machines (SVMs) as base learners. This powerful ensemble model is designed for both classification and regression problems, offering versatility and robust performance.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

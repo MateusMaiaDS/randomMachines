@@ -1,11 +1,11 @@
 \name{whosale}
 \title{Wholesale Dataset}
-\alias{whosale,wholesale}
+\alias{whosale}
 \description{
   The 'whosale' dataset contains information about wholesale customers' annual spending on various product categories.
 }
 \usage{
-  data{whosale}
+  data(whosale)
 }
 \format{
   A data frame with 440 rows and 8 columns.

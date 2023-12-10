@@ -16,7 +16,7 @@ A simulated data.frame with two predictors and the target variable.
 }
 \description{
 Simulation toy example initially found in Van der Laan, \emph{et.al} (2016), and used and escribed by Ara \emph{et. al} (2022).
-Inputs are 6 independent variables uniformly distributed on the interval \eqn{[-1,1]}. Outputs are generated following the equation
+Inputs are 6 independent variables sampled from \eqn{N(0,1)}. Outputs are generated following the equation
 \deqn{Y=X_{1}+0.707 X^{2}_{2} + 2\mathcal{1}_{(X_{3}>0)}+0.873 \log (X_{1})|X_{3}|+0.894 X_{2} X_{4}+2\mathcal{1}_{(X_{5}>0)}+0.464e^{X_{6}}+ \varepsilon, \varepsilon \sim \mathcal{N}(0,\sigma^{2})}
 }
 \references{

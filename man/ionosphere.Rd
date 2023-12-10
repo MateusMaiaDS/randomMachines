@@ -5,7 +5,7 @@
   The 'ionosphere' dataset contains radar data for the classification of radar returns as either 'good' or 'bad'.
 }
 \usage{
-  data{ionosphere}
+  data(ionosphere)
 }
 \format{
   A data frame with 351 rows and 35 columns.
