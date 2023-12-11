@@ -1,6 +1,6 @@
 #' @importMethodsFrom kernlab predict
 #' @export
-random_machines <- function(formula,
+randomMachines <- function(formula,
                                 train,
                                 validation = NULL,
                                 B = 25,
@@ -1177,11 +1177,6 @@ brier_score <- function(prob, observed, levels){
   return(b_score)
 }
 
-#' #Root Mean Squared Error (RMSE) Function
-#'
-#' @param predicted A vector of predicted values \eqn{\hat{\mathbf{y}}}.
-#' @param observed A vector of observed values \eqn{\mathbf{y}}.
-#' @return a the Root Mean Squared error calculated by \eqn{RMSE= \frac{1}{n}\sum_{i=1}^{n}\sqrt{\left(\hat{y}_{i}-\y_{i}\right)^{2}}}
 #' @export
 RMSE<-function(predicted,observed){
   min<-min(observed)

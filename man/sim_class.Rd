@@ -53,6 +53,6 @@ Mateus Maia: \email{mateusmaia11@gmail.com},
 Anderson Ara: \email{ara@ufpr.br}
 }
 \examples{
-library(rmachines)
-sim_data <- sim_class(n = 100)
+# library(randomMachines)
+# sim_data <- sim_class(n = 100)
 }

@@ -1,5 +1,5 @@
-\name{random_machines}
-\alias{random_machines}
+\name{randomMachines}
+\alias{randomMachines}
 \title{Random Machines}
 \description{Random Machines is an ensemble model which uses the combination of different kernel functions to improve the diversity in the bagging approach, improving the predictions in general. Random Machines was developed for classification and regression problems by bagging multiple kernel functions in support vector models.
 
@@ -27,7 +27,7 @@ The weights \eqn{\lambda_{r}} and \eqn{w_b} are different calculated for each ta
 }
 
 \usage{
-random_machines(
+randomMachines(
      formula,
      train,validation,
      B = 25, cost = 1,
@@ -107,7 +107,7 @@ random_machines(
      The correlation parameter \eqn{\beta} which calibrates the penalisation of each kernel performance in regression tasks.  The default value is \code{beta=2}.
      }
 }
-\value{ \code{random_machines()} returns an object of \code{\link{class}} "rm_class" for classification tasks or "rm_reg" for if the target variable is a continuous numerical response. See \code{\link[=predict.rm_class]{predict.rm_class}} or \code{\link{predict.rm_reg}} for more details of how to obtain predictions from each model respectively.}
+\value{ \code{randomMachines()} returns an object of \code{\link{class}} "rm_class" for classification tasks or "rm_reg" for if the target variable is a continuous numerical response. See \code{\link[=predict.rm_class]{predict.rm_class}} or \code{\link{predict.rm_reg}} for more details of how to obtain predictions from each model respectively.}
 \details{
      The Random Machines is an ensemble method which combines the bagging procedure proposed by Breiman (1996), using Support Vector Machine models as base learners jointly with a random selection of kernel functions that add diversity to the ensemble without harming its predictive performance. The kernel functions \eqn{k(x,y)} are described by the functions below,
 
@@ -144,7 +144,7 @@ Mateus Maia: \email{mateusmaia11@gmail.com},
 Anderson Ara: \email{ara@ufpr.br}
 }
 \examples{
-#library(rmachines)
+# library(randomMachines)
 
 ## Simulation from a binary output context
 #sim_data <- sim_class(n = 100)
@@ -153,10 +153,10 @@ Anderson Ara: \email{ara@ufpr.br}
 #sim_new <- sim_class(n = 100)
 
 ## Modelling Random Machines (probabilistic output)
-#rm_mod_prob <- random_machines(y~., train = sim_data,)
+#rm_mod_prob <- randomMachines(y~., train = sim_data,)
 
 ## Modelling Random Machines (binary class output)
-#rm_mod_label <- random_machines(y~., train = sim_data,prob_model = FALSE)
+#rm_mod_label <- randomMachines(y~., train = sim_data,prob_model = FALSE)
 
 ## Predicting for new data
 #y_hat <- predict(rm_mod,sim_new)
