@@ -972,7 +972,7 @@ regression_random_machines<-function(formula,#Formula that will be used
   predict <- lapply(early_model,function(x)predict(x,newdata=validation))
 
   #Calculating the weights (Equation 9)
-  rmse <- unlist(lapply(predict,function(x){loss_function(predicted=x,observed=validation[,class_name],epsilon)}))
+  rmse <- unlist(lapply(predict,function(x){loss_function(predicted=x,observed=validation[,class_name])}))
   rmse<-rmse/stats::sd(rmse)
   # std_rmse<-rmse/(range(validation[,class_name])[2]-range(validation[,class_name])[1])
   inv_rmse<-(exp(-rmse*beta))
@@ -1061,9 +1061,9 @@ regression_random_machines<-function(formula,#Formula that will be used
 
   #Calculating weights from equation 10
   kernel_weight<- mapply(predict_oobg,out_of_bag, FUN = function(pred_oob, oob){
-    loss_function(predicted = pred_oob,observed = oob[,class_name],epsilon)})
+    loss_function(predicted = pred_oob,observed = oob[,class_name])})
 
-  boots_error<-mapply(predict_oobg,out_of_bag, FUN  = function(pred_oob,oob){loss_function(predicted = pred_oob,observed = oob[,class_name],epsilon)})
+  boots_error<-mapply(predict_oobg,out_of_bag, FUN  = function(pred_oob,oob){loss_function(predicted = pred_oob,observed = oob[,class_name])})
 
   # Penalising by beta
   kernel_weight<- sapply(kernel_weight/stats::sd(kernel_weight),function(kern_weight){exp(-kern_weight*beta)})
