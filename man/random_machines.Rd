@@ -1,15 +1,15 @@
 \name{random_machines}
 \alias{random_machines}
 \title{Random Machines}
-\description{Random Machines is an ensemble model which use the combination of different kernel functions to improve the diversity in the bagging approach, improving the predictions in general. Random Machines was developed for classification and regression problems by bagging multiple kernel functions in support vector models.
+\description{Random Machines is an ensemble model which uses the combination of different kernel functions to improve the diversity in the bagging approach, improving the predictions in general. Random Machines was developed for classification and regression problems by bagging multiple kernel functions in support vector models.
 
 Random Machines uses SVMs (Cortes and Vapnik, 1995) as base learners in the bagging procedure with a random sample of kernel functions to build them.
 
-Let a  training sample given by \eqn{(\boldsymbol{x_{i}},y_i)} with \eqn{i=1,\dots, n} observations, where \eqn{\boldsymbol{x_{i}}} is the vector of independent variables and \eqn{y_{i}} the dependent one. The kernel bagging method initialize by training of the \eqn{r} single learner, where \eqn{r=1,\dots,R} and \eqn{R} is the  total number of different kernel functions that could be used in support vector models. In this implementation the default value is \eqn{R=4} (gaussian, polynomial, laplacian and linear). See more details below.
+Let a training sample given by \eqn{(\boldsymbol{x_{i}},y_i)} with \eqn{i=1,\dots, n} observations, where \eqn{\boldsymbol{x_{i}}} is the vector of independent variables and \eqn{y_{i}} the dependent one. The kernel bagging method initializes by training of the \eqn{r} single learner, where \eqn{r=1,\dots,R} and \eqn{R} is the total number of different kernel functions that could be used in support vector models. In this implementation the default value is \eqn{R=4} (gaussian, polynomial, laplacian and linear). See more details below.
 
-Each single learner is internally validated and the weights \eqn{\lambda_{r}} are calculated proportional by the strength from the single predictive performance.
+Each single learner is internally validated and the weights \eqn{\lambda_{r}} are calculated proportionally to the strength from the single predictive performance.
 
-Afterwards, \eqn{B} bootstrap samples are sampled from the training set. A support vector machine model \eqn{g_{b}}is trained for each bootstrap sample, \eqn{b=i,\dots,B} and the kernel function that will be used for \eqn{g_{b}} will be determined by a random choice with probability \eqn{\lambda_{r}}. The final weight \eqn{w_b} in the bagging procedure is calculated by out-of-bag samples.
+Afterwards, \eqn{B} bootstrap samples are sampled from the training set. A support vector machine model \eqn{g_{b}} is trained for each bootstrap sample, \eqn{b=i,\dots,B} and the kernel function that will be used for \eqn{g_{b}} will be determined by a random choice with probability \eqn{\lambda_{r}}. The final weight \eqn{w_b} in the bagging procedure is calculated by out-of-bag samples.
 
 The final model \eqn{G(\boldsymbol{x}_i)} for a new \eqn{\boldsymbol{x}_i} is given by,
 
@@ -50,7 +50,7 @@ random_machines(
 
 \arguments{
      \item{formula}{
-     formula an object of class \code{\link{formula}}: it should contain a symbolic description of the model to be fitted, indicating the dependent variable and all predictors that should be included.
+     an object of class \code{\link{formula}}: it should contain a symbolic description of the model to be fitted, indicating the dependent variable and all predictors that should be included.
      }
      \item{train}{
      the training data \eqn{\left\{\left( \mathbf{x}_{i},y_{i} \right)\right\}_{i=1}^{n}} used to train the model.
