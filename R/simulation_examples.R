@@ -1,10 +1,7 @@
 #'
 #' @export
 sim_class <- function(n, p = 2 ,ratio = 0.5 , mu_a = 0,
-                      sigma_a = 1,mu_b = 1,sigma_b = 1,
-                      seed = NULL){
-     # Setting the seed
-     set.seed(seed)
+                      sigma_a = 1,mu_b = 1,sigma_b = 1){
 
      # Setting the number of observations from the first data set
      n_a <- round(n*abs(1-ratio))
@@ -28,10 +25,8 @@ sim_class <- function(n, p = 2 ,ratio = 0.5 , mu_a = 0,
 
 
 #' @export
-sim_reg1 <- function(n,sigma = 0.5,seed= NULL){
+sim_reg1 <- function(n,sigma = 0.5){
 
-        # Setting the seed.
-        set.seed(seed)
 
         # Generating the x
         x <- replicate(2,stats::runif(n,min = -1,max = 1))
@@ -45,10 +40,8 @@ sim_reg1 <- function(n,sigma = 0.5,seed= NULL){
 }
 
 #' @export
-sim_reg2 <- function(n,sigma = 0.5,seed= NULL){
+sim_reg2 <- function(n,sigma = 0.5){
 
-        # Setting the seed.
-        set.seed(seed)
 
         # Generating the x
         x <- replicate(8,stats::runif(n,min = -1,max = 1))
@@ -62,10 +55,7 @@ sim_reg2 <- function(n,sigma = 0.5,seed= NULL){
 }
 
 #' @export
-sim_reg3 <- function(n,sigma = 0.5,seed= NULL){
-
-        # Setting the seed.
-        set.seed(seed)
+sim_reg3 <- function(n,sigma = 0.5){
 
         # Generating the x
         x <- replicate(4,stats::runif(n,min = -1,max = 1))
@@ -79,10 +69,7 @@ sim_reg3 <- function(n,sigma = 0.5,seed= NULL){
 }
 
 #' @export
-sim_reg4 <- function(n,sigma = 0.5,seed= NULL){
-
-        # Setting the seed.
-        set.seed(seed)
+sim_reg4 <- function(n,sigma = 0.5){
 
         # Generating the x
         x <- replicate(4,stats::runif(n,min = -1,max = 1))
@@ -97,10 +84,8 @@ sim_reg4 <- function(n,sigma = 0.5,seed= NULL){
 
 
 #' @export
-sim_reg5 <- function(n,sigma = 0.5,seed= NULL){
+sim_reg5 <- function(n,sigma = 0.5){
 
-        # Setting the seed.
-        set.seed(seed)
 
         # Generating the x
         x <- replicate(6,stats::rnorm(n = n))

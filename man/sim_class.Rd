@@ -10,8 +10,7 @@ sim_class(
   mu_a = 0,
   sigma_a = 1,
   mu_b = 1,
-  sigma_b = 1,
-  seed = NULL
+  sigma_b = 1
 )
 }
 \arguments{
@@ -29,7 +28,6 @@ sim_class(
 
 \item{sigma_b}{Standard devation of \eqn{X_{2}}}
 
-\item{seed}{Setting a seed for reproducibility of results. The default is NULL}
 }
 \value{
 A simulated data.frame with two predictors for a binary classification problem

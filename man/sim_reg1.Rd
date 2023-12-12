@@ -3,14 +3,13 @@
 \alias{sim_reg1}
 \title{Simulation for a regression toy examples from Random Machines Regression 1}
 \usage{
-sim_reg1(n, sigma, seed = NULL)
+sim_reg1(n, sigma)
 }
 \arguments{
 \item{n}{Sample size}
 
 \item{sigma}{Standard deviation of residual noise}
 
-\item{seed}{Define a seed to run the simulation. \code{NULL} is the default}
 }
 \value{
 A simulated data.frame with two predictors and the target variable.

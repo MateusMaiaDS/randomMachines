@@ -5,7 +5,6 @@ randomMachines <- function(formula,
                                 validation = NULL,
                                 B = 25,
                                 cost = 1,
-                                seed.bootstrap = NULL,
                                 automatic_tuning = FALSE,
                                 gamma_rbf = 1,
                                 gamma_lap = 1,
@@ -15,7 +14,7 @@ randomMachines <- function(formula,
                                 gamma_cau = 1, d_t = 2,
                                 kernels = c("rbfdot", "polydot", "laplacedot",
                                             "vanilladot"),
-                                prob_model = T,
+                                prob_model = TRUE,
                                 # Default parameters for the regression case
                                 loss_function = RMSE,
                                 epsilon = 0.1,
@@ -57,7 +56,6 @@ randomMachines <- function(formula,
                            validation = validation,
                            B = B,
                            cost = cost,
-                           seed.bootstrap = seed.bootstrap,
                            automatic_tuning = automatic_tuning,
                            gamma_rbf = gamma_rbf,
                            gamma_lap = gamma_lap,
@@ -73,7 +71,6 @@ randomMachines <- function(formula,
                                     validation = validation,
                                     B = B,
                                     cost = cost,
-                                    seed.bootstrap = seed.bootstrap,
                                     automatic_tuning = automatic_tuning,
                                     gamma_rbf = gamma_rbf,
                                     gamma_lap = gamma_lap,
@@ -89,7 +86,6 @@ randomMachines <- function(formula,
                                           validation = validation,
                                           B = B,
                                           cost = cost,
-                                          seed.bootstrap = seed.bootstrap,
                                           automatic_tuning = automatic_tuning,
                                           gamma_rbf = gamma_rbf,
                                           gamma_lap = gamma_lap,
@@ -110,7 +106,6 @@ random_machines_prob <- function(formula,
                                  validation,
                                  B = 25,
                                  cost = 1,
-                                 seed.bootstrap = NULL,
                                  automatic_tuning = FALSE,
                                  gamma_rbf = 1,
                                  gamma_lap = 1,
@@ -185,7 +180,7 @@ random_machines_prob <- function(formula,
   if (automatic_tuning) {
     early_model <- lapply(kernel_type, function(k_type){
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = train, type = "C-svc",
                     kernel = if (k_type == "vanilladot") {
                       "polydot"
@@ -211,7 +206,7 @@ random_machines_prob <- function(formula,
     early_model <- lapply(kernel_type, function(k_type){
 
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = train, type = "C-svc",
                     kernel = if (k_type == "vanilladot") {
                       "polydot"
@@ -256,73 +251,39 @@ random_machines_prob <- function(formula,
   at_least_one <- NULL
 
   # Sampling the bootstrap samples
-  if (is.null(seed.bootstrap)) {
-    while (is.null(at_least_one)) {
-      boots_index_row_new <- lapply(
-        boots_index_row,function(x){
-          sample(1:x, x, replace = TRUE)
-        }
-      )
-      boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
-      out_of_bag <- lapply(boots_index_row_new, function(x) {train[-unique(x), ]})
-
-      ## The class 1 needs to be contained at least once so you have a valid bootstrap sample
-      for (p in 1:length(boots_sample)) {
-        while (table(boots_sample[[p]][class_name])[2] < 2) {
-          boots_index_row_new_new <- lapply(
-            boots_index_row, function(x){
-              sample(1:x, x, replace = TRUE)
-            }
-          )
-          boots_sample_new <- lapply(boots_index_row_new_new, function(x){train[x, ]})
-          out_of_bag_new <- lapply(boots_index_row_new_new, function(x){train[-unique(x), ]})
-
-          boots_sample[[p]] <- boots_sample_new[[1]]
-          out_of_bag[[p]] <- out_of_bag_new[[1]]
-        }
+  while (is.null(at_least_one)) {
+    boots_index_row_new <- lapply(
+      boots_index_row,function(x){
+        sample(1:x, x, replace = TRUE)
       }
-      ## Checking if any has length 0
-      if (any(unlist(lapply(boots_sample, function(x) { table(x[[class_name]]) == 0 })))) {
-        at_least_one <- NULL
-      } else {
-        at_least_one <- 1
-      }
+    )
+    boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
+    out_of_bag <- lapply(boots_index_row_new, function(x) {train[-unique(x), ]})
 
-    }
-  } else { # Do the same verification but with a specified seed for the bootstrap samples
-    set.seed(seed.bootstrap)
-    while (is.null(at_least_one)) {
-      boots_index_row_new <- lapply(
-        boots_index_row, function(x){
-          sample(1:x, x, replace = TRUE)
-        }
-      )
-      boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
-      out_of_bag <- lapply(boots_index_row_new, function(x){train[-unique(x), ]})
+    ## The class 1 needs to be contained at least once so you have a valid bootstrap sample
+    for (p in 1:length(boots_sample)) {
+      while (table(boots_sample[[p]][class_name])[2] < 2) {
+        boots_index_row_new_new <- lapply(
+          boots_index_row, function(x){
+            sample(1:x, x, replace = TRUE)
+          }
+        )
+        boots_sample_new <- lapply(boots_index_row_new_new, function(x){train[x, ]})
+        out_of_bag_new <- lapply(boots_index_row_new_new, function(x){train[-unique(x), ]})
 
-      ## The first class y==1 needs to has more than one observation (two or more)
-      for (p in 1:length(boots_sample)) {
-        while (table(boots_sample[[p]][class_name])[2] < 2) {
-          boots_index_row_new_new <- lapply(
-            boots_index_row, function(x){
-              sample(1:x, x, replace = TRUE)
-            }
-          )
-          boots_sample_new <- lapply(boots_index_row_new_new, function(x) {train[x, ]})
-          out_of_bag_new <- lapply(boots_index_row_new_new, function(x) {train[-unique(x), ]})
-
-          boots_sample[[p]] <- boots_sample_new[[1]]
-          out_of_bag[[p]] <- out_of_bag_new[[1]]
-        }
-      }
-      ##
-      if (any(unlist(lapply(boots_sample, function(x) { table(x[[class_name]]) == 0 })))) {
-        at_least_one <- NULL
-      } else {
-        at_least_one <- 1
+        boots_sample[[p]] <- boots_sample_new[[1]]
+        out_of_bag[[p]] <- out_of_bag_new[[1]]
       }
     }
+    ## Checking if any has length 0
+    if (any(unlist(lapply(boots_sample, function(x) { table(x[[class_name]]) == 0 })))) {
+      at_least_one <- NULL
+    } else {
+      at_least_one <- 1
+    }
+
   }
+
 
   # Sampling different kernel functions
   random_kernel <- sample(kernel_type, B, replace = TRUE, prob = prob_weights)
@@ -330,7 +291,7 @@ random_machines_prob <- function(formula,
   if (automatic_tuning) {
     models <- mapply(boots_sample, random_kernel,FUN = function(boot_sample,rand_kern){
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = boot_sample, type = "C-svc", kernel = if (rand_kern == "vanilladot") {
                       "polydot"
                     } else if (rand_kern == "cauchydot") {
@@ -355,7 +316,7 @@ random_machines_prob <- function(formula,
   } else {
     models <- mapply(boots_sample, random_kernel,FUN = function(boot_sample,rand_kern){
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = boot_sample, type = "C-svc", kernel = if (rand_kern == "vanilladot") {
                       "polydot"
                     } else if (rand_kern == "cauchydot") {
@@ -505,7 +466,6 @@ random_machines_acc <- function(formula,
                                  validation,
                                  B = 25,
                                  cost = 1,
-                                 seed.bootstrap = NULL,
                                  automatic_tuning = FALSE,
                                  gamma_rbf = 1,
                                  gamma_lap = 1,
@@ -580,7 +540,7 @@ random_machines_acc <- function(formula,
   if (automatic_tuning) {
     early_model <- lapply(kernel_type, function(k_type){
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = train, type = "C-svc",
                     kernel = if (k_type == "vanilladot") {
                       "polydot"
@@ -606,7 +566,7 @@ random_machines_acc <- function(formula,
     early_model <- lapply(kernel_type, function(k_type){
 
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = train, type = "C-svc",
                     kernel = if (k_type == "vanilladot") {
                       "polydot"
@@ -656,73 +616,39 @@ random_machines_acc <- function(formula,
   at_least_one <- NULL
 
   # Sampling the bootstrap samples
-  if (is.null(seed.bootstrap)) {
-    while (is.null(at_least_one)) {
-      boots_index_row_new <- lapply(
-        boots_index_row,function(x){
-          sample(1:x, x, replace = TRUE)
-        }
-      )
-      boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
-      out_of_bag <- lapply(boots_index_row_new, function(x) {train[-unique(x), ]})
-
-      ## The class 1 needs to be contained at least once so you have a valid bootstrap sample
-      for (p in 1:length(boots_sample)) {
-        while (table(boots_sample[[p]][class_name])[2] < 2) {
-          boots_index_row_new_new <- lapply(
-            boots_index_row, function(x){
-              sample(1:x, x, replace = TRUE)
-            }
-          )
-          boots_sample_new <- lapply(boots_index_row_new_new, function(x){train[x, ]})
-          out_of_bag_new <- lapply(boots_index_row_new_new, function(x){train[-unique(x), ]})
-
-          boots_sample[[p]] <- boots_sample_new[[1]]
-          out_of_bag[[p]] <- out_of_bag_new[[1]]
-        }
+  while (is.null(at_least_one)) {
+    boots_index_row_new <- lapply(
+      boots_index_row,function(x){
+        sample(1:x, x, replace = TRUE)
       }
-      ## Checking if any has length 0
-      if (any(unlist(lapply(boots_sample, function(x) { table(x[[class_name]]) == 0 })))) {
-        at_least_one <- NULL
-      } else {
-        at_least_one <- 1
-      }
+    )
+    boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
+    out_of_bag <- lapply(boots_index_row_new, function(x) {train[-unique(x), ]})
 
-    }
-  } else { # Do the same verification but with a specified seed for the bootstrap samples
-    set.seed(seed.bootstrap)
-    while (is.null(at_least_one)) {
-      boots_index_row_new <- lapply(
-        boots_index_row, function(x){
-          sample(1:x, x, replace = TRUE)
-        }
-      )
-      boots_sample <- lapply(boots_index_row_new, function(x) {train[x, ]})
-      out_of_bag <- lapply(boots_index_row_new, function(x){train[-unique(x), ]})
+    ## The class 1 needs to be contained at least once so you have a valid bootstrap sample
+    for (p in 1:length(boots_sample)) {
+      while (table(boots_sample[[p]][class_name])[2] < 2) {
+        boots_index_row_new_new <- lapply(
+          boots_index_row, function(x){
+            sample(1:x, x, replace = TRUE)
+          }
+        )
+        boots_sample_new <- lapply(boots_index_row_new_new, function(x){train[x, ]})
+        out_of_bag_new <- lapply(boots_index_row_new_new, function(x){train[-unique(x), ]})
 
-      ## The first class y==1 needs to has more than one observation (two or more)
-      for (p in 1:length(boots_sample)) {
-        while (table(boots_sample[[p]][class_name])[2] < 2) {
-          boots_index_row_new_new <- lapply(
-            boots_index_row, function(x){
-              sample(1:x, x, replace = TRUE)
-            }
-          )
-          boots_sample_new <- lapply(boots_index_row_new_new, function(x) {train[x, ]})
-          out_of_bag_new <- lapply(boots_index_row_new_new, function(x) {train[-unique(x), ]})
-
-          boots_sample[[p]] <- boots_sample_new[[1]]
-          out_of_bag[[p]] <- out_of_bag_new[[1]]
-        }
-      }
-      ##
-      if (any(unlist(lapply(boots_sample, function(x) { table(x[[class_name]]) == 0 })))) {
-        at_least_one <- NULL
-      } else {
-        at_least_one <- 1
+        boots_sample[[p]] <- boots_sample_new[[1]]
+        out_of_bag[[p]] <- out_of_bag_new[[1]]
       }
     }
+    ## Checking if any has length 0
+    if (any(unlist(lapply(boots_sample, function(x) { table(x[[class_name]]) == 0 })))) {
+      at_least_one <- NULL
+    } else {
+      at_least_one <- 1
+    }
+
   }
+
 
   # Sampling different kernel functions
   random_kernel <- sample(kernel_type, B, replace = TRUE, prob = prob_weights)
@@ -730,7 +656,7 @@ random_machines_acc <- function(formula,
   if (automatic_tuning) {
     models <- mapply(boots_sample, random_kernel,FUN = function(boot_sample,rand_kern){
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = boot_sample, type = "C-svc", kernel = if (rand_kern == "vanilladot") {
                       "polydot"
                     } else if (rand_kern == "cauchydot") {
@@ -755,7 +681,7 @@ random_machines_acc <- function(formula,
   } else {
     models <- mapply(boots_sample, random_kernel,FUN = function(boot_sample,rand_kern){
       kernlab::ksvm(formula,
-                    prob.model = T,
+                    prob.model = TRUE,
                     data = boot_sample, type = "C-svc", kernel = if (rand_kern == "vanilladot") {
                       "polydot"
                     } else if (rand_kern == "cauchydot") {
@@ -911,7 +837,7 @@ regression_random_machines<-function(formula,#Formula that will be used
                                      poly_scale = 1, # Scale factor from polynomial kernel
                                      offset = 0, # offset from the polynomial kernel
                                      degree=2,#Degree used in Table 1.
-                                     epsilon=0.1,beta=2,seed.bootstrap=NULL,
+                                     epsilon=0.1,beta=2,
                                      loss_function,automatic_tuning=FALSE #Choose a loss-fucntion
 
 ){
@@ -991,12 +917,8 @@ regression_random_machines<-function(formula,#Formula that will be used
 
   #======Selecting the Bootstraping samples============
   #Defining which rows will be sampled
-  if(is.null(seed.bootstrap)){
-    boots_index_row<- lapply(boots_index_row,function(x){sample(1:x,x,replace=TRUE)})#Generating the boots_sample index
-  }else{
-    set.seed(seed.bootstrap)
-    boots_index_row<-lapply(boots_index_row,function(x){sample(1:x,x,replace=TRUE)})#Generating the boots_sample index
-  }
+  boots_index_row<- lapply(boots_index_row,function(x){sample(1:x,x,replace=TRUE)})#Generating the boots_sample index
+
 
   #Defining out_of the bags_sample
   #Defining the Boots samples

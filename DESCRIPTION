@@ -2,14 +2,11 @@ Package: randomMachines
 Type: Package
 Title: randomMachines: An Ensemble Modeling Package using Random Machines
 Version: 0.1.0
-Author: Mateus Maia, Gabriel Felipe Ribero and Anderson Ara
-Maintainer: Maintainer: Mateus Maia Marques <mateus.maiamarques.2021@mumail.ie>, Anderson Ara <ara@ufpr.br>
-Description: 
-    The "randomMachines" package introduces a novel ensemble method employing Support Vector Machines (SVMs) as base learners. This powerful ensemble model is designed for both classification and regression problems, offering versatility and robust performance.
-References:
-     - Ara, Anderson, et al. "Regression random machines: An ensemble support vector regression model with free kernel choice." Expert Systems with Applications 202 (2022): 117107.
-     - Maia, Mateus, Arthur R. Azevedo, and Anderson Ara. "Predictive comparison between random machines and random forests." Journal of Data Science 19.4 (2021): 593-614.
-     - Ara, Anderson, et al. "Random machines: A bagged-weighted support vector model with free kernel choice." Journal of Data Science 19.3 (2021): 409-428.
+Authors@R: c(person("Mateus", "Maia", email = "mateus.maiamarques.2021@mumail.ie", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7056-386X")),
+            person("Anderson", "Ara", email = "ara@ufpr.br", role = c("cte"), comment = c(ORCID = "0000-0002-1041-2768")),
+            person("Gabriel", "Ribeiro", email = "brielribeiro08@gmail.com", role = c("cte")))
+Maintainer: Maintainer: Mateus Maia Marques <mateus.maiamarques.2021@mumail.ie>
+Description: The "randomMachines" package introduces a novel ensemble method employing Support Vector Machines (SVMs) as base learners. This powerful ensemble model is designed for both classification (Ara A. , et. al, 2021) <doi.org/10.6339/21-JDS1014>, and regression (Ara A., et. al, 2021) <doi.org/10.1016/j.eswa.2022.117107> problems, offering versatility and robust performance across different datasets and compared with other consolidated methods as Random Forests (Maia, M, et. al, 2021) <doi.org/10.6339/21-JDS1025>.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -21,5 +18,4 @@ Imports:
 Depends: 
     R (>= 2.10)
 Suggests: 
-    testthat (>= 3.0.0)
-Config/testthat/edition: 3
+    

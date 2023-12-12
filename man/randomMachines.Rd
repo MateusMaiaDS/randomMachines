@@ -31,7 +31,6 @@ randomMachines(
      formula,
      train,validation,
      B = 25, cost = 1,
-     seed.bootstrap = NULL,
      automatic_tuning = FALSE,
      gamma_rbf = 1,
      gamma_lap = 1,
@@ -41,7 +40,7 @@ randomMachines(
      gamma_cau = 1,
      d_t = 2,
      kernels = c("rbfdot", "polydot", "laplacedot", "vanilladot"),
-     prob_model = T,
+     prob_model = TRUE,
      loss_function = RMSE,
      epsilon = 0.1,
      beta = 2
@@ -63,9 +62,6 @@ randomMachines(
      }
      \item{cost}{
      the \eqn{C}-constant term of the regularization on soft margins at support vector models. The default value is \code{cost=1}.
-     }
-     \item{seed.bootstrap}{
-     setting a seed to replicate bootstrap sampling. The default value is \code{NULL}.
      }
      \item{automatic_tuning}{
      boolean to define if the kernel hyperparameters will be selected using the \code{sigest} from the \code{ksvm} function. The default value is \code{FALSE}.
@@ -95,7 +91,7 @@ randomMachines(
      a vector with the name of kernel functions that will be used in the Random Machines model. The default include the kernel functions: \code{c("rbfdot", "polydot", "laplacedot", "vanilladot").} The other kernel functions as \code{"cauchydot"} and \code{"tdot"} are exclusive to the binary classification setting.
      }
      \item{prob_model}{
-     a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = \code{T}).
+     a boolean to define if the algorithm will be using a probabilistic approach to the define the predictions (default = \code{TRUE}).
      }
      \item{loss_function}{
      Define which loss function is going to be used in the regression approach. The default is the \code{RMSE} function but others can be added.
