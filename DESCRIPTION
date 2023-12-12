@@ -2,8 +2,8 @@ Package: randomMachines
 Type: Package
 Title: randomMachines: An Ensemble Modeling Package using Random Machines
 Version: 0.1.0
-Author: Mateus Maia and Anderson Ara
-Maintainer:Maintainer: Mateus Maia Marques <mateus.maiamarques.2021@mumail.ie>, Anderson Ara <ara@ufpr.br>
+Author: Mateus Maia, Gabriel Felipe Ribero and Anderson Ara
+Maintainer: Maintainer: Mateus Maia Marques <mateus.maiamarques.2021@mumail.ie>, Anderson Ara <ara@ufpr.br>
 Description: 
     The "randomMachines" package introduces a novel ensemble method employing Support Vector Machines (SVMs) as base learners. This powerful ensemble model is designed for both classification and regression problems, offering versatility and robust performance.
 References:
@@ -20,3 +20,6 @@ Imports:
     stats
 Depends: 
     R (>= 2.10)
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
