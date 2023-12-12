@@ -141,6 +141,7 @@ Maia, Mateus, Arthur R. Azevedo, and Anderson Ara. "Predictive comparison betwee
 }
 \author{
 Mateus Maia: \email{mateusmaia11@gmail.com},
+Gabriel Felipe Ribeiro: \email{brielribeiro08@gmail.com},
 Anderson Ara: \email{ara@ufpr.br}
 }
 \examples{
@@ -159,5 +160,5 @@ Anderson Ara: \email{ara@ufpr.br}
 #rm_mod_label <- randomMachines(y~., train = sim_data,prob_model = FALSE)
 
 ## Predicting for new data
-#y_hat <- predict(rm_mod,sim_new)
+#y_hat <- predict(rm_mod_label,sim_new)
 }
