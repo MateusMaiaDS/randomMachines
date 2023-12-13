@@ -1,6 +1,6 @@
 Package: randomMachines
 Type: Package
-Title: randomMachines: An Ensemble Modeling Package using Random Machines
+Title: An Ensemble Modeling Package using Random Machines
 Version: 0.1.0
 Authors@R: c(person("Mateus", "Maia", email = "mateus.maiamarques.2021@mumail.ie", role = c("aut","cre"), comment = c(ORCID = "0000-0001-7056-386X")),
             person("Anderson", "Ara", email = "ara@ufpr.br", role = c("cte"), comment = c(ORCID = "0000-0002-1041-2768")),
