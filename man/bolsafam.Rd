@@ -27,7 +27,7 @@
   }
 }
 \source{
-  The 'bolsafam' dataset is sourced from the Brazilian organizational site called \emph{Transparency Portal}: \url{https://portaldatransparencia.gov.br/}.
+  The 'bolsafam' dataset is sourced from the Brazilian organizational site called \emph{Transparency Portal}.
 }
 \references{
 
