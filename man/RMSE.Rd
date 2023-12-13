@@ -14,6 +14,6 @@ RMSE(predicted, observed)
 a the Root Mean Squared error calculated by the formula in the description.
 }
 \description{
-This function computes the Root Mean Squared Error (RMSE), a widely used metric for evaluating the accuracy of predictions in regression tasks. The formula is given by
+Computes the Root Mean Squared Error (RMSE), a widely used metric for evaluating the accuracy of predictions in regression tasks. The formula is given by
 \deqn{RMSE = \sqrt{\frac{1}{n}\sum_{i=1}^{n}\left(y_{i}-\hat{y}_{i}\right)^{2}}}
 }

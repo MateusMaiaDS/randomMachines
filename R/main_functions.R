@@ -453,7 +453,7 @@ random_machines_prob <- function(formula,
       prob_model = TRUE
     )
   } else {
-    print("The number of kernel isn't compatible")
+    stop("The number of kernel isn't compatible")
   }
 
   attr(model_result, "class") <- "rm_class"
@@ -819,7 +819,7 @@ random_machines_acc <- function(formula,
 
     )
   } else {
-    print("The number of kernel isn't compatible")
+    stop("The number of kernel isn't compatible")
   }
 
   attr(model_result, "class") <- "rm_class"
@@ -1086,11 +1086,6 @@ predict.rm_reg <- function(object, newdata,...) {
   return(pred_df_test)
 }
 
-#' Brier Score function
-#'
-#' @param prob predicted probabilities
-#' @param observed \eqn{y} observed values (it assumed that the positive class is coded is equal to one and the negative 0)
-#' @param levels A string vector with the original levels from the target variable
 #' @export
 #'
 brier_score <- function(prob, observed, levels){

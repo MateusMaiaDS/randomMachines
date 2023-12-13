@@ -141,20 +141,20 @@ Gabriel Felipe Ribeiro: \email{brielribeiro08@gmail.com},
 Anderson Ara: \email{ara@ufpr.br}
 }
 \examples{
-# library(randomMachines)
+library(randomMachines)
 
-## Simulation from a binary output context
-#sim_data <- sim_class(n = 100)
+# Simulation from a binary output context
+sim_data <- sim_class(n = 75)
 
 ## Setting the training and validation set
-#sim_new <- sim_class(n = 100)
+sim_new <- sim_class(n = 75)
 
-## Modelling Random Machines (probabilistic output)
-#rm_mod_prob <- randomMachines(y~., train = sim_data,)
+# Modelling Random Machines (probabilistic output)
+rm_mod_prob <- randomMachines(y~., train = sim_data,)
 
 ## Modelling Random Machines (binary class output)
-#rm_mod_label <- randomMachines(y~., train = sim_data,prob_model = FALSE)
+rm_mod_label <- randomMachines(y~., train = sim_data,prob_model = FALSE)
 
 ## Predicting for new data
-#y_hat <- predict(rm_mod_label,sim_new)
+y_hat <- predict(rm_mod_label,sim_new)
 }

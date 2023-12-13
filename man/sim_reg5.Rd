@@ -31,7 +31,7 @@ Anderson Ara: \email{ara@ufpr.br}
 }
 
 \examples{
-# library(randomMachines)
-# sim_data <- sim_reg5(n=100)
+library(randomMachines)
+sim_data <- sim_reg5(n=100)
 }
 

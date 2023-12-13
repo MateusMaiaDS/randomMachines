@@ -11,7 +11,7 @@
 \item{...}{other arguments}
 }
 \value{
-Predicted values
+Predicted values for the regression support vector models
 }
 \description{
 Predict method for rm_reg class

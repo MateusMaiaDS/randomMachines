@@ -1,7 +1,7 @@
 % Please edit documentation in R/simulation_examples.R
 \name{sim_class}
 \alias{sim_class}
-\title{Function to generate a binary classification data set from normal distribution}
+\title{Generate a binary classification data set from normal distribution}
 \usage{
 sim_class(
   n,
@@ -33,7 +33,7 @@ sim_class(
 A simulated data.frame with two predictors for a binary classification problem
 }
 \description{
-This function can be used as example of a classification task based on a separation of two
+Simulation used as example of a classification task based on a separation of two
 normal multivariate distributions with different vector of means and differerent covariate matrices.
 For the label \eqn{A} the \eqn{\mathbf{X}_{A}} are sampled from a normal distribution \eqn{{MVN}\left(\mu_{A}\mathbf{1}_{p},\sigma_{A}^{2}\mathbf{I}_{p}\right)}
 while for label \eqn{B} the samples \eqn{\mathbf{X}_{B}} are from a normal distribution \eqn{{MVN} \left(\mu_{B}\mathbf{1}_{p},\sigma_{B}^{2}\mathbf{I}_{p}\right)}. For more details see Ara \emph{et. al} (2021), and Breiman L (1998).
