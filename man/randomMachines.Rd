@@ -150,7 +150,7 @@ sim_data <- sim_class(n = 75)
 sim_new <- sim_class(n = 75)
 
 # Modelling Random Machines (probabilistic output)
-rm_mod_prob <- randomMachines(y~., train = sim_data,)
+rm_mod_prob <- randomMachines(y~., train = sim_data)
 
 ## Modelling Random Machines (binary class output)
 rm_mod_label <- randomMachines(y~., train = sim_data,prob_model = FALSE)

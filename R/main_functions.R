@@ -81,6 +81,9 @@ randomMachines <- function(formula,
                                     d_t = d_t,
                                     kernels = kernels)
    } else if(reg_rm) {
+     if(length(kernels)!=4){
+       warning("The regression version of Random Machines uses Linear, Polynomial, Gaussian and Laplacian kernels.")
+     }
      rm_mod <- regression_random_machines(formula = formula,
                                           train = train,
                                           validation = validation,
@@ -1010,9 +1013,8 @@ regression_random_machines<-function(formula,#Formula that will be used
                                          cost=cost,
                                          gamma=gamma,
                                          degree=degree),bootstrap_models=models,bootstrap_samples=boots_sample,
-                       probabilities=prob_weights,
-                       init_rmse=rmse,kernel_weight_norm=kernel_weight_norm,
-                       list_kernels=random_kernel,predict_oob=predict_oobg,botse=boots_error)
+                       kernel_weight_norm=kernel_weight_norm,
+                       predict_oob=predict_oobg)
   attr(model_result,"class")<-"rm_reg"
   #=============================
   return(model_result)
@@ -1021,10 +1023,27 @@ regression_random_machines<-function(formula,#Formula that will be used
 
 
 
-#' S3 class for RM classification
+#' S4 class for RM classification
 #'
-#' @export
-setClass("rm_class")
+#' @slot train a \code{data.frame} corresponding to the training data used into the model
+#' @slot class_name a string with target variable used in the model
+#' @slot kernel_weight a numeric vector corresponding to the weights for each bootstrap model contribution
+#' @slot lambda_values a named list with value of the vector of \eqn{\boldsymbol{\lambda}} sampling probabilities associated with each each kernel function
+#' @slot model_params a list with all used model specifications
+#' @slot bootstrap_models a list with all \code{ksvm} objects for each bootstrap sample
+#' @slot bootstrap_samples a list with all bootstrap samples used to train each base model of the ensemble
+#' @slot prob a boolean indicating if a probabilitistic approch was used in the classification Random Machines
+#' @details For more details see Ara, Anderson, et al. "Random machines: A bagged-weighted support vector model with free kernel choice." Journal of Data Science 19.3 (2021): 409-428.
+#' @importFrom methods new
+rm_class <- setClass("rm_class",
+  slots = list(train = "data.frame",
+               class_name = "character",
+               kernel_weight = "numeric",
+               lambda_values = "list",
+               model_params = "list",
+               bootstrap_models = "list",
+               bootstrap_samples = "list")
+)
 
 #' Prediction function for the rm_class_model
 #'
@@ -1032,15 +1051,20 @@ setClass("rm_class")
 #'
 #' @param object A fitted RM model object of class  \code{rm_class}.
 #' @param newdata A data frame or matrix containing the new data to be predicted.
-#' @param ... currently not used.
 #' @importMethodsFrom kernlab predict
 #'
 #' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`.
 #' @method predict rm_class
 #' @aliases predict.rm_class
-#' @examples NULL
 #' @export
-#' @usage NULL
+#' @usage predict(object,newdata)
+#' @examples
+#' # Generating a sample for the simulation
+#' library(randomMachines)
+#' sim_data <- sim_class(n = 75)
+#' sim_new <- sim_class(n = 25)
+#' rm_mod <- randomMachines(y~., train = sim_data)
+#' y_hat <- predict(rm_mod, newdata = sim_new)
 predict.rm_class <- function(object, newdata,...) {
   # UseMethod(predict,rm_model)
   if (object$prob_model) {
@@ -1064,23 +1088,45 @@ predict.rm_class <- function(object, newdata,...) {
   }
 }
 
-#' S3 class for RM regression
-#'
-#' @export
-setClass("rm_reg")
+#' S4 class for RM regression
+#' @slot y_train_hat a numeric  corresponding to the predictions \eqn{\hat{y}_{i}} for the training set
+#' @slot lambda_values a named list with value of the vector of \eqn{\boldsymbol{\lambda}} sampling probabilities associated with each each kernel function
+#' @slot model_params a list with all used model specifications
+#' @slot bootstrap_models a list with all \code{ksvm} objects for each bootstrap sample
+#' @slot bootstrap_samples a list with all bootstrap samples used to train each base model of the ensemble
+#' @slot kernel_weight_norm a numeric vector corresponding to the normalised weights for each bootstrap model contribution
+#' @importFrom methods new
+#' @details For more details see Ara, Anderson, et al. "Regression random machines: An ensemble support vector regression model with free kernel choice." Expert Systems with Applications 202 (2022): 117107.
+rm_reg <- setClass("rm_reg",
+                     slots = list(y_train_hat = "numeric",
+                                  lambda_values = "list",
+                                  model_params = "list",
+                                  bootstrap_models = "list",
+                                  bootstrap_samples = "list")
+)
 
 
-#' Predict method for rm_reg class
+#' Prediction function for the rm_reg_model
 #'
-#' @param object An object of class "rm_reg"
-#' @param newdata New data for prediction
-#' @param ... other arguments
-#' @return Predicted values
-#' @export
+#' This function predicts the outcome for a RM object model using new data for continuous \eqn{y}
+#'
+#' @param object A fitted RM model object of class  \code{rm_reg}
+#' @param newdata A data frame or matrix containing the new data to be predicted.
+#' @importMethodsFrom kernlab predict
+#'
+#' @return Predicted values \code{newdata} object from the Random Machines model.
 #' @method predict rm_reg
 #' @aliases predict.rm_reg
-#' @usage NULL
-predict.rm_reg <- function(object, newdata,...) {
+#' @export
+#' @usage predict(object,newdata)
+#' @examples
+#' # Generating a sample for the simulation
+#' library(randomMachines)
+#' sim_data <- sim_reg1(n = 75)
+#' sim_new <- sim_reg1(n = 25)
+#' rm_mod_reg <- randomMachines(y~., train = sim_data)
+#' y_hat <- predict(rm_mod_reg, newdata = sim_new)
+predict.rm_reg <- function(object, newdata) {
   # Accessing training error
   pred_df_test <- apply(mapply(object$bootstrap_models, object$kernel_weight_norm, FUN = function(mod, k_w_n) {(predict(mod, newdata) * k_w_n)}), 1, sum) # Multiplying the weights
   return(pred_df_test)

@@ -3,7 +3,31 @@
 \docType{class}
 \name{rm_class-class}
 \alias{rm_class-class}
-\title{S3 class for RM classification}
+\alias{rm_class}
+\title{S4 class for RM classification}
 \description{
-S3 class for RM classification
+S4 class for RM classification
 }
+\details{
+For more details see Ara, Anderson, et al. "Random machines: A bagged-weighted support vector model with free kernel choice." Journal of Data Science 19.3 (2021): 409-428.
+}
+\section{Slots}{
+
+\describe{
+\item{\code{train}}{a \code{data.frame} corresponding to the training data used into the model}
+
+\item{\code{class_name}}{a string with target variable used in the model}
+
+\item{\code{kernel_weight}}{a numeric vector corresponding to the weights for each bootstrap model contribution}
+
+\item{\code{lambda_values}}{a named list with value of the vector of \eqn{\boldsymbol{\lambda}} sampling probabilities associated with each each kernel function}
+
+\item{\code{model_params}}{a list with all used model specifications}
+
+\item{\code{bootstrap_models}}{a list with all \code{ksvm} objects for each bootstrap sample}
+
+\item{\code{bootstrap_samples}}{a list with all bootstrap samples used to train each base model of the ensemble}
+
+\item{\code{prob}}{a boolean indicating if a probabilitistic approch was used in the classification Random Machines}
+}}
+
