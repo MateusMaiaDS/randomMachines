@@ -1045,26 +1045,8 @@ rm_class <- setClass("rm_class",
                bootstrap_samples = "list")
 )
 
-#' Prediction function for the rm_class_model
-#'
-#' This function predicts the outcome for a RM object model using new data
-#'
-#' @param object A fitted RM model object of class  \code{rm_class}.
-#' @param newdata A data frame or matrix containing the new data to be predicted.
-#' @importMethodsFrom kernlab predict
-#'
-#' @return A vector of predicted outcomes: probabilities in case of `prob_model = TRUE` and classes in case of `prob_model = FALSE`.
 #' @method predict rm_class
-#' @aliases predict.rm_class
 #' @export
-#' @usage predict(object,newdata)
-#' @examples
-#' # Generating a sample for the simulation
-#' library(randomMachines)
-#' sim_data <- sim_class(n = 75)
-#' sim_new <- sim_class(n = 25)
-#' rm_mod <- randomMachines(y~., train = sim_data)
-#' y_hat <- predict(rm_mod, newdata = sim_new)
 predict.rm_class <- function(object, newdata,...) {
   # UseMethod(predict,rm_model)
   if (object$prob_model) {
@@ -1106,27 +1088,10 @@ rm_reg <- setClass("rm_reg",
 )
 
 
-#' Prediction function for the rm_reg_model
-#'
-#' This function predicts the outcome for a RM object model using new data for continuous \eqn{y}
-#'
-#' @param object A fitted RM model object of class  \code{rm_reg}
-#' @param newdata A data frame or matrix containing the new data to be predicted.
-#' @importMethodsFrom kernlab predict
-#'
-#' @return Predicted values \code{newdata} object from the Random Machines model.
 #' @method predict rm_reg
-#' @aliases predict.rm_reg
 #' @export
-#' @usage predict(object,newdata)
-#' @examples
-#' # Generating a sample for the simulation
-#' library(randomMachines)
-#' sim_data <- sim_reg1(n = 75)
-#' sim_new <- sim_reg1(n = 25)
-#' rm_mod_reg <- randomMachines(y~., train = sim_data)
-#' y_hat <- predict(rm_mod_reg, newdata = sim_new)
-predict.rm_reg <- function(object, newdata) {
+predict.rm_reg <- function(object, newdata,...) {
+  # UseMethod(predict,rm_reg)
   # Accessing training error
   pred_df_test <- apply(mapply(object$bootstrap_models, object$kernel_weight_norm, FUN = function(mod, k_w_n) {(predict(mod, newdata) * k_w_n)}), 1, sum) # Multiplying the weights
   return(pred_df_test)
