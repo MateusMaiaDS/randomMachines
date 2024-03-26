@@ -265,7 +265,10 @@ random_machines_prob <- function(formula,
 
     ## The class 1 needs to be contained at least once so you have a valid bootstrap sample
     for (p in 1:length(boots_sample)) {
-      while (table(boots_sample[[p]][class_name])[2] < 2) {
+      test_counter <- 0
+      # while (table(boots_sample[[p]][class_name])[2] < 2) { # --- Old version verying only one side
+        while ((table(boots_sample[[p]][class_name])[2] < 3) | table(boots_sample[[p]][class_name])[1] < 3) {
+
         boots_index_row_new_new <- lapply(
           boots_index_row, function(x){
             sample(1:x, x, replace = TRUE)
@@ -276,6 +279,11 @@ random_machines_prob <- function(formula,
 
         boots_sample[[p]] <- boots_sample_new[[1]]
         out_of_bag[[p]] <- out_of_bag_new[[1]]
+        test_counter <- test_counter + 1
+        # Exiting the program
+        if(test_counter > 2e10){
+          stop("High imbalance")
+        }
       }
     }
     ## Checking if any has length 0
