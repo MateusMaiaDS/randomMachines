@@ -638,7 +638,8 @@ random_machines_acc <- function(formula,
 
     ## The class 1 needs to be contained at least once so you have a valid bootstrap sample
     for (p in 1:length(boots_sample)) {
-      while (table(boots_sample[[p]][class_name])[2] < 2) {
+      # while (table(boots_sample[[p]][class_name])[2] < 2) { # --- Old
+      while ((table(boots_sample[[p]][class_name])[2] < 3) | table(boots_sample[[p]][class_name])[1] < 3) {
         boots_index_row_new_new <- lapply(
           boots_index_row, function(x){
             sample(1:x, x, replace = TRUE)
